@@ -1,0 +1,47 @@
+--- API ---
+
+Gomoku Engine
+	Fields
+		- Width : int
+		- Stones : Stones[]
+		- IsOver : bool
+		- Current : Player
+		- Winner : Player
+		- IsBlacksTurn : bool
+	Methods
+		- Constructor : Player, Player
+		- Result Place : Stone
+		- Swap
+
+Result
+	Fields
+		- IsSuccess : bool
+		- Message : string
+	Methods
+		- Constructor : message, success
+		- string ToString
+
+Stone
+	Fields
+		- Row : int
+		- Column : int
+		- IsBlack : bool
+	Methods
+		- Constructor : int, int, bool
+
+--- My Code ---
+
+Console IO
+	Methods
+		- GetString
+		- GetIntInRange
+		- WriteWithColor
+
+Gomoku IO Controller
+	Fields
+		- gameEngine : GomokuEngine
+	Methods
+		- StartGame
+		- GameLoop
+		- DrawBoard
+		- GetNextMove
