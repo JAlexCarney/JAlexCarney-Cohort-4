@@ -46,6 +46,11 @@ namespace Gomoku
             return output;
         }
 
+        /// <summary>
+        /// Gets a bool from the user by forcing them to enter either Y or N
+        /// </summary>
+        /// <param name="prompt">The prompt that the user sees</param>
+        /// <returns></returns>
         public static bool GetYesNo(string prompt)
         {
             string userString;

@@ -81,6 +81,9 @@ namespace Gomoku
             ConsoleIO.WriteWithColor(result.Message + "\n", ConsoleColor.Green);
         }
 
+        /// <summary>
+        /// Uses the past move data to draw a Go board with stones
+        /// </summary>
         private void DrawBoard() 
         {
             Console.WriteLine();
@@ -96,35 +99,43 @@ namespace Gomoku
             // Draw Board
             for (int row = 0; row < Game.GomokuEngine.WIDTH; row++) 
             {
-                ConsoleIO.WriteWithColor($"{row+1:00}", ConsoleColor.Yellow);
+                ConsoleIO.WriteWithColor($"{row+1:00} ", ConsoleColor.Yellow);
+                Console.BackgroundColor = ConsoleColor.DarkYellow;
                 for (int col = 0; col < Game.GomokuEngine.WIDTH; col++) 
                 {
                     if (board[col,row] == null)
                     {
-                        ConsoleIO.WriteWithColor("  _", ConsoleColor.DarkYellow);
+                        ConsoleIO.WriteWithColor(" - ", ConsoleColor.Gray);
                     }
                     else 
                     {
-                        char stone = board[col, row].IsBlack ? 'X' : '0';
-                        ConsoleColor color = board[col, row].IsBlack ? ConsoleColor.Cyan : ConsoleColor.White;
-                        ConsoleIO.WriteWithColor($"  {stone}", color);
+                        char stone = '■';
+                        ConsoleColor color = board[col, row].IsBlack ? ConsoleColor.Black : ConsoleColor.White;
+                        ConsoleIO.WriteWithColor($" {stone} ", color);
                     }
                 }
-                Console.WriteLine();
+                Console.BackgroundColor = ConsoleColor.Black;
+                ConsoleIO.WriteWithColor(":\n", ConsoleColor.Black);
             }
 
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Prompts the user to select the implementation of a player
+        /// </summary>
+        /// <param name="num">either 1 or 2, used for user prompting</param>
+        /// <returns>A Player object of the desired implementation</returns>
         private Players.IPlayer GetPlayer(int num) 
         {
             // Corectly Prompt Player
             ConsoleIO.WriteWithColor($"Player {num} is:\n", ConsoleColor.Yellow);
             ConsoleIO.WriteWithColor("1. Human\n", ConsoleColor.DarkYellow);
             ConsoleIO.WriteWithColor("2. Random Player\n", ConsoleColor.DarkYellow);
-            
+            ConsoleIO.WriteWithColor("3. Blocking Player\n", ConsoleColor.DarkYellow);
+
             // Get User Choice
-            int choice = ConsoleIO.GetIntInRange("Select [1-2]: ", 1, 2);
+            int choice = ConsoleIO.GetIntInRange("Select [1-3]: ", 1, 3);
 
             // Create Correct Player Instance
             Players.IPlayer player = null;
@@ -137,6 +148,9 @@ namespace Gomoku
                     break;
                 case 2:
                     player = new Players.RandomPlayer();
+                    break;
+                case 3:
+                    player = new Players.BlockingPlayer();
                     break;
             }
 
