@@ -5,11 +5,11 @@
         static void Main(string[] args)
         {
             // create a game controller
-            GomokuIOController gomokuIOController = new GomokuIOController();
+            GomokuController gomokuController = new GomokuController();
             do
             {
                 // start playing!
-                gomokuIOController.StartGame();
+                gomokuController.StartGame();
                 System.Console.WriteLine();
             } while (ConsoleIO.GetYesNo("Play Again [y/n]: "));
 

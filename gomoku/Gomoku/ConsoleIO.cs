@@ -69,6 +69,44 @@ namespace Gomoku
         }
 
         /// <summary>
+        /// Prompts the user to select the implementation of a player
+        /// </summary>
+        /// <param name="num">either 1 or 2, used for user prompting</param>
+        /// <returns>A Player object of the desired implementation</returns>
+        public static Players.IPlayer GetPlayer(int num)
+        {
+            // Corectly Prompt Player
+            ConsoleIO.WriteWithColor($"Player {num} is:\n", ConsoleColor.Yellow);
+            ConsoleIO.WriteWithColor("1. Human\n", ConsoleColor.DarkYellow);
+            ConsoleIO.WriteWithColor("2. Random Player\n", ConsoleColor.DarkYellow);
+            ConsoleIO.WriteWithColor("3. Blocking Player\n", ConsoleColor.DarkYellow);
+
+            // Get User Choice
+            int choice = ConsoleIO.GetIntInRange("Select [1-3]: ", 1, 3);
+
+            // Create Correct Player Instance
+            Players.IPlayer player = null;
+            switch (choice)
+            {
+                case 1:
+                    // Get Player Name from user
+                    string name = ConsoleIO.GetString($"\nPlayer {num}, enter your name: ");
+                    player = new Players.HumanPlayer(name);
+                    break;
+                case 2:
+                    player = new Players.RandomPlayer();
+                    break;
+                case 3:
+                    player = new Players.BlockingPlayer();
+                    break;
+            }
+
+            Console.WriteLine();
+
+            return player;
+        }
+
+        /// <summary>
         /// repeatedly Prompts the user for an int and only returns once they have
         /// entered a valid int in the given range
         /// </summary>
