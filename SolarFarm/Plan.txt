@@ -1,0 +1,61 @@
+SolarFarm
+	SolarFarm.Core
+		Enum SolarPanelMaterial
+			PolySi, MonoSi, AmoSi, CdTe, CIGS
+			// multicrystalline silicon, monocrystalline silicon, amorphous silicon, cadmium telluride, or copper indium gallium selenide
+		SolarPanelIdentifier
+			+Section {get; set;}
+			+Row {get; set;}
+			+Column {get; set;}
+		SolarPanel
+			+Section {get; set;} : string // NonEmpty
+			+Row {get; set;} : int // 0->250
+			+Column {get; set;} : int // 0->250
+			+YearInstalled {get; set;} : DateTime // Past
+			+Material {get; set;} : SolarPanelMaterial
+			+IsTracking {get; set;} : bool
+		Result<T>
+			+Message : string
+			+Success : bool
+			+Data : T
+	SolarFarm.UI
+		*ConsoleIO
+			// Getters
+			*+GetInt(string prompt) : int
+			*+GetIntInRange(string prompt, int min, int max) : int
+			*+GetString(string prompt) : string
+			*+GetDateTime(string prompt) : DateTime
+			*+GetPastDateTime(string prompt) : DateTime
+			*+GetSolarPanel() : SolarPanel
+			// Displayers (All return void)
+			*+DisplayHeader(string title)
+			*+DisplayMenuOptions(params string[] options)
+			*+DisplaySolarPanel(SolarPanel panel)
+			*+DisplayPanelResult(Result<SolarPanel>)
+			*+DisplayPanelsResult(Result<List<SolarPanel>>)
+		SolarFarmController
+			-_service SolarPanelService
+			+Run() : void
+			+MenuLoop() : void
+	SolarFarm.BLL
+		SolarPanelService
+			+Create(SolarPanel) : Result<SolarPanel>
+			+ReadAll() : Result<List<SolarPanel>>
+			+ReadBySection(string section) : Result<List<SolarPanel>>
+			+ReadByPosition(string section, int row, int column) : Result<SolarPanel>
+			+Update(SolarPanel panel) : Result<SolarPanel>
+			+UpdateByPosition(string section, int row, int column) : Result<SolarPanel>
+	SolarFarm.DAL
+		SolarPanelRepository
+			-_fileName : string
+			-_panels : Dictionary<SolarPanelIdentifier, SolarPanel>
+			+Create() : SolarPanel
+			+ReadAll() : List<SolarPanel>
+			+ReadBySection(string section) : List<SolarPanel>
+			+ReadByPosition(string section, int row, int column) : SolarPanel
+			+Update(SolarPanel panel) : SolarPanel
+			+UpdateByPosition(string section, int row, int column) : SolarPanel
+			+Delete(SolarPanel panel)
+			+DeleteByPosition(string section, int row, int column) : SolarPanel
+			-SaveToFile() : void
+			-LoadFromFile() : void
