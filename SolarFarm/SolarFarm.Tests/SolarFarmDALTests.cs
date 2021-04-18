@@ -98,5 +98,36 @@ namespace SolarFarm.Tests
             Assert.AreEqual(repo.ReadAll().Count, 5);
             Assert.AreEqual(repo.ReadBySection("Ranch").Count, 2);
         }
+
+        [Test]
+        public void ShouldUpdateEntryInDataBase() 
+        {
+            // Arrange
+            SolarPanel replacementPanel = new SolarPanel();
+            replacementPanel.Section = "Ranch";
+            replacementPanel.Row = 75;
+            replacementPanel.Column = 80;
+            replacementPanel.Material = SolarPanelMaterial.PolySi;
+            replacementPanel.YearInstalled = new DateTime(2011, 1, 1);
+            replacementPanel.IsTracking = false;
+
+            // Act
+            SolarPanelRepository repo = new SolarPanelRepository(FLUID_TEST_FILE);
+            SolarPanel testPanel = repo.ReadByPosition("WestField", 60, 55);
+            testPanel = repo.Update(testPanel.Section, testPanel.Row, testPanel.Column, replacementPanel);
+            
+            // Assert
+            Assert.IsNull(repo.ReadByPosition("WestField", 60, 55));
+            Assert.IsNotNull(repo.ReadByPosition("Ranch", 75, 80));
+            Assert.AreEqual(testPanel.Section, replacementPanel.Section);
+            Assert.AreEqual(testPanel.Row, replacementPanel.Row);
+            Assert.AreEqual(testPanel.Column, replacementPanel.Column);
+            Assert.AreEqual(testPanel.Material, replacementPanel.Material);
+            Assert.AreEqual(testPanel.YearInstalled, replacementPanel.YearInstalled);
+            Assert.AreEqual(testPanel.IsTracking, replacementPanel.IsTracking);
+            Assert.AreNotEqual(repo.ReadByPosition("WestField", 10, 14), replacementPanel);
+            Assert.AreEqual(repo.ReadAll().Count, 5);
+            Assert.AreEqual(repo.ReadBySection("Ranch").Count, 3);
+        }
     }
 }

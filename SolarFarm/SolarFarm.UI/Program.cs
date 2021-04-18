@@ -6,7 +6,8 @@ namespace SolarFarm.UI
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            SolarFarmController solarFarmController = new ();
+            solarFarmController.Run();
         }
     }
 }

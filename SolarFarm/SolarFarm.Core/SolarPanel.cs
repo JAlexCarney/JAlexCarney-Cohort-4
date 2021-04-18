@@ -26,5 +26,10 @@ namespace SolarFarm.Core
         {
             return HashCode.Combine(Section, Row, Column, YearInstalled, Material, IsTracking);
         }
+
+        public override string ToString()
+        {
+            return $"Panel {Section}-{Row}-{Column}";
+        }
     }
 }

@@ -90,9 +90,18 @@ namespace SolarFarm.DAL
             return null;
         }
 
+        /// <summary>
+        /// Replaces an entry with an updated panel
+        /// </summary>
+        /// <param name="section">section to be replaced</param>
+        /// <param name="row">row to be replaced</param>
+        /// <param name="column">column to be replaced</param>
+        /// <param name="panel">Panel to be added in it's place</param>
+        /// <returns></returns>
         public SolarPanel Update(string section, int row, int column, SolarPanel panel) 
         {
-            _panels[new SolarPanelIdentifier(section, row, column)] = panel;
+            DeleteByPosition(section, row, column);
+            _panels[new SolarPanelIdentifier(panel.Section, panel.Row, panel.Column)] = panel;
             // Save updated data to file
             SaveToFile();
             return panel;
@@ -180,7 +189,7 @@ namespace SolarFarm.DAL
                     {
                         //Saved as -> "Section,Row,Column,Material,InstallationYear,IsTracking"
                         streamWriter.WriteLine(
-                            $"{panel.Section},{panel.Row},{panel.Column},{panel.Material},{panel.YearInstalled},{panel.IsTracking}");
+                            $"{panel.Section},{panel.Row},{panel.Column},{panel.Material},{panel.YearInstalled.Year},{panel.IsTracking}");
                     }
                 }
             }
