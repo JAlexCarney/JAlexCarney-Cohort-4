@@ -4,7 +4,7 @@ namespace SolarFarm.UI
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             SolarFarmController solarFarmController = new ();
             solarFarmController.Run();

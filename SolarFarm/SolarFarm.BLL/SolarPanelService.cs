@@ -10,18 +10,24 @@ namespace SolarFarm.BLL
 {
     public class SolarPanelService
 	{
-		SolarPanelRepository _repo;
+		private readonly SolarPanelRepository _repo;
 
-		public SolarPanelService() 
+		public SolarPanelService(string fileName) 
 		{
-			_repo = new SolarPanelRepository("production.csv");
+			_repo = new SolarPanelRepository(fileName);
 		}
 
 		public Result<SolarPanel> Create(SolarPanel panel) 
 		{
-
-			//TODO Check for Duplicates
 			Result<SolarPanel> result = new();
+			
+			if (_repo.ReadByPosition(panel.Section, panel.Row, panel.Column) != null) 
+			{
+				result.Data = null;
+				result.Success = false;
+				result.Message = $"{panel} already exists.";
+				return result;
+			}
 			result.Data = _repo.Create(panel);
 			result.Success = true;
 			result.Message = $"{panel} added.";
@@ -32,6 +38,12 @@ namespace SolarFarm.BLL
 		{
 			Result<List<SolarPanel>> result = new ();
 			result.Data = _repo.ReadAll();
+			if (result.Data.Count == 0)
+			{
+				result.Success = false;
+				result.Message = $"No panels found.";
+				return result;
+			}
 			result.Success = true;
 			result.Message = "Successfully Read From Repo.";
 			return result;
@@ -42,6 +54,12 @@ namespace SolarFarm.BLL
 			//TODO Fail on empty section
 			Result<List<SolarPanel>> result = new();
 			result.Data = _repo.ReadBySection(section);
+			if (result.Data.Count == 0)
+			{
+				result.Success = false;
+				result.Message = $"No panels found in {section}.";
+				return result;
+			}
 			result.Success = true;
 			result.Message = "Successfully Read From Repo.";
 			return result;
@@ -51,6 +69,12 @@ namespace SolarFarm.BLL
 		{
 			Result<SolarPanel> result = new();
 			result.Data = _repo.ReadByPosition(section, row, column);
+			if (result.Data == null) 
+			{
+				result.Success = false;
+				result.Message = $"Panel {section}-{row}-{column} not found.";
+				return result;
+			}
 			result.Success = true;
 			result.Message = "Successfully Read From Repo.";
 			return result;
@@ -58,19 +82,49 @@ namespace SolarFarm.BLL
 
 		public Result<SolarPanel> Update(SolarPanel oldPanel, SolarPanel newPanel) 
 		{
-			Result<SolarPanel> result = new();
-			result.Data = _repo.Update(oldPanel.Section, oldPanel.Row, oldPanel.Column, newPanel);
-			result.Success = true;
-			result.Message = $"{newPanel} updated.";
-			return result;
+			return UpdateByPosition(oldPanel.Section, oldPanel.Row, oldPanel.Column, newPanel);
 		}
 
 		public Result<SolarPanel> UpdateByPosition(string section, int row, int column, SolarPanel newPanel) 
 		{
 			Result<SolarPanel> result = new();
+			if (_repo.ReadByPosition(section, row, column) == null)
+			{
+				result.Success = false;
+				result.Message = $"Panel {section}-{row}-{column} not found.";
+				return result;
+			}
+			SolarPanel testPanel = _repo.ReadByPosition(newPanel.Section, newPanel.Row, newPanel.Column);
+			if (testPanel != null)
+			{
+                if (testPanel.Section != section || testPanel.Row != row || testPanel.Column != column) 
+				{
+					result.Data = null;
+					result.Success = false;
+					result.Message = $"{newPanel} already exists.";
+					return result;
+				}
+			}
 			result.Data = _repo.Update(section, row, column, newPanel);
 			result.Success = true;
 			result.Message = $"{newPanel} updated.";
+			return result;
+		}
+
+		public Result<SolarPanel> DeleteByPosition(string section, int row, int column) 
+		{
+			Result<SolarPanel> result = new();
+			if (_repo.ReadByPosition(section, row, column) == null)
+			{
+				result.Data = null;
+				result.Success = false;
+				result.Message = $"There is no panel {section}-{row}-{column}.";
+				return result;
+			}
+			result.Data = _repo.DeleteByPosition(section, row, column);
+			result.Success = true;
+			//TODO: Fail on non existent panel
+			result.Message = $"{result.Data} removed.";
 			return result;
 		}
 	}

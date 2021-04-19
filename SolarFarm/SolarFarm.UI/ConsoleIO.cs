@@ -21,13 +21,16 @@ namespace SolarFarm.UI
 
         public static SolarPanel GetSolarPanel() 
         {
-            var panel = new SolarPanel();
-            panel.Section = GetString("Section: ");
-            panel.Row = GetIntInRange("Row: ", 1, 250);
-            panel.Column = GetIntInRange("Column: ", 1, 250);
-            panel.Material = GetSolarPanelMarterial("Material: ");
-            panel.YearInstalled = new DateTime(GetIntInRange("Installation Year: ", 1, DateTime.Now.Year), 1, 1);
-            panel.IsTracking = GetYesOrNo("Tracked [y/n]: ");
+            var panel = new SolarPanel
+            {
+                Section = GetString("Section: "),
+                Row = GetIntInRange("Row: ", 1, 250),
+                Column = GetIntInRange("Column: ", 1, 250),
+                Material = GetSolarPanelMarterial("Material: "),
+                YearInstalled = new DateTime(GetIntInRange("Installation Year: ", 1, DateTime.Now.Year), 1, 1),
+                IsTracking = GetYesOrNo("Tracked [y/n]: ")
+            };
+            Console.WriteLine();
             return panel;
         }
 
@@ -98,6 +101,135 @@ namespace SolarFarm.UI
             Console.ReadKey();
         }
 
+        public static SolarPanel UpdatePanel(SolarPanel originalPanel)
+        {
+            DisplayUpdatingPanel(originalPanel);
+
+            string originalYesOrNo = originalPanel.IsTracking ? "yes" : "no";
+
+            var panel = new SolarPanel
+            {
+                Section = GetStringDefualtable($"Section ({originalPanel.Section}): ", originalPanel.Section),
+                Row = GetIntInRangeDefualtable($"Row ({originalPanel.Row}): ", 1, 250, originalPanel.Row),
+                Column = GetIntInRangeDefualtable($"Column ({originalPanel.Column}): ", 1, 250, originalPanel.Column),
+                Material = GetSolarPanelMaterialDefualtable($"Material ({originalPanel.Material}): ", originalPanel.Material),
+                YearInstalled = new DateTime(GetIntInRangeDefualtable($"Installation Year ({originalPanel.YearInstalled.Year}): ", 1, DateTime.Now.Year, originalPanel.YearInstalled.Year), 1, 1),
+                IsTracking = GetYesOrNoDefualtable($"Tracked ({originalYesOrNo}) [y/n]: ", originalPanel.IsTracking)
+            };
+            Console.WriteLine();
+            return panel;
+        }
+
+        private static bool GetYesOrNoDefualtable(string prompt, bool defualt)
+        {
+            string input;
+            do
+            {
+                Console.Write(prompt);
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                input = Console.ReadLine().ToLower();
+                Console.ForegroundColor = ConsoleColor.White;
+                if (!string.IsNullOrEmpty(input))
+                {
+                    if (input == "y")
+                    {
+                        return true;
+                    }
+                    else if (input == "n")
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        DisplayFailure("Must enter y, n or [Enter].");
+                    }
+                }
+                else
+                {
+                    return defualt;
+                }
+            }
+            while (true);
+        }
+
+        public static SolarPanelMaterial GetSolarPanelMaterialDefualtable(string prompt, SolarPanelMaterial defualt) 
+        {
+            SolarPanelMaterial output = SolarPanelMaterial.AmoSi;
+            string input;
+            bool validInput;
+            do
+            {
+                Console.Write(prompt);
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                input = Console.ReadLine();
+                Console.ForegroundColor = ConsoleColor.White;
+                if (string.IsNullOrEmpty(input)) 
+                {
+                    return defualt;
+                }
+                validInput = Enum.IsDefined(typeof(SolarPanelMaterial), input);
+                if (validInput)
+                {
+                    // PlayerChoice.Rock
+                    output = Enum.Parse<SolarPanelMaterial>(input);
+                }
+                else
+                {
+                    DisplayFailure("Material is not valid.");
+                }
+            }
+            while (!validInput);
+            return output;
+        }
+
+        public static int GetIntInRangeDefualtable(string prompt, int min, int max, int defualt) 
+        {
+            int output;
+            string input;
+            do
+            {
+                Console.Write(prompt);
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                input = Console.ReadLine();
+                Console.ForegroundColor = ConsoleColor.White;
+                if (string.IsNullOrEmpty(input)) 
+                {
+                    return defualt;
+                }
+                if (int.TryParse(input, out output))
+                {
+                    if (output < min || output > max)
+                    {
+                        DisplayFailure($"Must be between {min} and {max}.");
+                    }
+                }
+                else
+                {
+                    DisplayFailure("Must enter an integer.");
+                }
+            }
+            while (!int.TryParse(input, out output) || output < min || output > max);
+
+            return output;
+        }
+
+        public static string GetStringDefualtable(string prompt, string defualt) 
+        {
+            string output;
+            
+            Console.Write(prompt);
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            output = Console.ReadLine().Trim();
+            Console.ForegroundColor = ConsoleColor.White;
+
+            if (string.IsNullOrEmpty(output)) 
+            {
+                return defualt;
+            }
+
+            return output;
+        }
+
         public static void DisplaySuccess(string prompt) 
         {
             WriteWithColor("[Success]\n", ConsoleColor.Green);
@@ -110,6 +242,11 @@ namespace SolarFarm.UI
             WriteWithColor("[Err]\n", ConsoleColor.Red);
             WriteWithColor(prompt, ConsoleColor.Red);
             Console.WriteLine();
+        }
+
+        public static void DisplayUpdatingPanel(SolarPanel panel) 
+        {
+            ConsoleIO.WriteWithColor($"Editing {panel}\nPress [Enter] to keep original value.\n\n", ConsoleColor.DarkYellow);
         }
 
         public static void DisplaySolarPanelList(List<SolarPanel> panels) 
@@ -143,8 +280,12 @@ namespace SolarFarm.UI
             {
                 Console.Write(prompt);
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                output = Console.ReadLine();
+                output = Console.ReadLine().Trim();
                 Console.ForegroundColor = ConsoleColor.White;
+                if (string.IsNullOrEmpty(output)) 
+                {
+                    DisplayFailure("Entry can not be empty.");
+                }
             }
             while (string.IsNullOrEmpty(output));
             return output;
@@ -185,7 +326,7 @@ namespace SolarFarm.UI
         /// <returns>The first valid int entered by the user</returns>
         public static int GetIntInRange(string prompt, int min, int max)
         {
-            int output = min - 1;
+            int output;
             string input;
             do
             {
@@ -193,6 +334,17 @@ namespace SolarFarm.UI
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 input = Console.ReadLine();
                 Console.ForegroundColor = ConsoleColor.White;
+                if (int.TryParse(input, out output))
+                {
+                    if (output < min || output > max) 
+                    {
+                        DisplayFailure($"Must be between {min} and {max}.");
+                    }
+                }
+                else 
+                {
+                    DisplayFailure("Must enter an integer.");
+                }
             }
             while (!int.TryParse(input, out output) || output < min || output > max);
 

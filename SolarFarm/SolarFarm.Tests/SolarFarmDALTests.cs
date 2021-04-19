@@ -10,6 +10,7 @@ using System.IO;
 
 namespace SolarFarm.Tests
 {
+    [TestFixture]
     class SolarFarmDALTests
     {
         // Test file reading
@@ -49,13 +50,15 @@ namespace SolarFarm.Tests
         {
             // Arrange
             string filename = "testFileTwo.csv";
-            SolarPanel panel = new SolarPanel();
-            panel.Section = "West Field";
-            panel.Row = 20;
-            panel.Column = 30;
-            panel.Material = SolarPanelMaterial.MonoSi;
-            panel.YearInstalled = new DateTime(2020, 1, 1);
-            panel.IsTracking = false;
+            var panel = new SolarPanel
+            {
+                Section = "West Field",
+                Row = 20,
+                Column = 30,
+                Material = SolarPanelMaterial.MonoSi,
+                YearInstalled = new DateTime(2020, 1, 1),
+                IsTracking = false
+            };
 
             // Act
             _repo = new SolarPanelRepository(filename);
@@ -74,16 +77,18 @@ namespace SolarFarm.Tests
         public void ShouldReadDataAlreadyInFileAndReadByPositionAndSection() 
         {
             // Arrange
-            SolarPanel expectedPanel = new SolarPanel();
-            expectedPanel.Section = "WestField";
-            expectedPanel.Row = 60;
-            expectedPanel.Column = 55;
-            expectedPanel.Material = SolarPanelMaterial.AmoSi;
-            expectedPanel.YearInstalled = new DateTime(2018, 1, 1);
-            expectedPanel.IsTracking = false;
+            var expectedPanel = new SolarPanel
+            {
+                Section = "WestField",
+                Row = 60,
+                Column = 55,
+                Material = SolarPanelMaterial.AmoSi,
+                YearInstalled = new DateTime(2018, 1, 1),
+                IsTracking = false
+            };
 
             // Act
-            SolarPanelRepository repo = new SolarPanelRepository(FLUID_TEST_FILE);
+            var repo = new SolarPanelRepository(FLUID_TEST_FILE);
             SolarPanel testPanel = repo.ReadByPosition("WestField", 60, 55);
 
             // Assert
@@ -103,16 +108,18 @@ namespace SolarFarm.Tests
         public void ShouldUpdateEntryInDataBase() 
         {
             // Arrange
-            SolarPanel replacementPanel = new SolarPanel();
-            replacementPanel.Section = "Ranch";
-            replacementPanel.Row = 75;
-            replacementPanel.Column = 80;
-            replacementPanel.Material = SolarPanelMaterial.PolySi;
-            replacementPanel.YearInstalled = new DateTime(2011, 1, 1);
-            replacementPanel.IsTracking = false;
+            var replacementPanel = new SolarPanel
+            {
+                Section = "Ranch",
+                Row = 75,
+                Column = 80,
+                Material = SolarPanelMaterial.PolySi,
+                YearInstalled = new DateTime(2011, 1, 1),
+                IsTracking = false
+            };
 
             // Act
-            SolarPanelRepository repo = new SolarPanelRepository(FLUID_TEST_FILE);
+            var repo = new SolarPanelRepository(FLUID_TEST_FILE);
             SolarPanel testPanel = repo.ReadByPosition("WestField", 60, 55);
             testPanel = repo.Update(testPanel.Section, testPanel.Row, testPanel.Column, replacementPanel);
             

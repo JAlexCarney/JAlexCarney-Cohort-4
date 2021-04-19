@@ -62,7 +62,7 @@ namespace SolarFarm.DAL
         /// <returns></returns>
         public List<SolarPanel> ReadBySection(string section) 
         {
-            List<SolarPanel> FoundPanels = new List<SolarPanel>();
+            var FoundPanels = new List<SolarPanel>();
             foreach (SolarPanel panel in _panels.Values) 
             {
                 if (panel.Section == section) 
@@ -82,7 +82,7 @@ namespace SolarFarm.DAL
         /// <returns></returns>
         public SolarPanel ReadByPosition(string section, int row, int column) 
         {
-            SolarPanelIdentifier iD = new SolarPanelIdentifier(section, row, column);
+            var iD = new SolarPanelIdentifier(section, row, column);
             if (_panels.ContainsKey(iD)) 
             {
                 return _panels[iD];
@@ -129,7 +129,7 @@ namespace SolarFarm.DAL
         /// <returns></returns>
         public SolarPanel DeleteByPosition(string section, int row, int column)
         {
-            SolarPanelIdentifier iD = new SolarPanelIdentifier(section, row, column);
+            var iD = new SolarPanelIdentifier(section, row, column);
             SolarPanel panel = _panels[iD];
             _panels.Remove(iD);
             // Save updated data to file
@@ -144,28 +144,28 @@ namespace SolarFarm.DAL
         {
             if (File.Exists(_fileName))
             {
-                using (StreamReader streamReader = new StreamReader(_fileName))
+                using var streamReader = new StreamReader(_fileName);
+                for (string dataEntry = streamReader.ReadLine(); dataEntry != null; dataEntry = streamReader.ReadLine())
                 {
-                    for (string dataEntry = streamReader.ReadLine(); dataEntry != null; dataEntry = streamReader.ReadLine())
+                    //Loaded as -> "Section,Row,Column,Material,InstallationYear,IsTracking"
+                    //Input validation handeled in BLL and UI layers
+                    string[] dataFields = dataEntry.Split(',');
+
+                    // Create Solar Panel object
+                    var panel = new SolarPanel
                     {
-                        //Loaded as -> "Section,Row,Column,Material,InstallationYear,IsTracking"
-                        //Input validation handeled in BLL and UI layers
-                        string[] dataFields = dataEntry.Split(',');
+                        Section = dataFields[0],
+                        Row = int.Parse(dataFields[1]),
+                        Column = int.Parse(dataFields[2]),
+                        Material = Enum.Parse<SolarPanelMaterial>(dataFields[3]),
+                        YearInstalled = new DateTime(int.Parse(dataFields[4]), 1, 1),
+                        IsTracking = bool.Parse(dataFields[5])
+                    };
 
-                        // Create Solar Panel object
-                        SolarPanel panel = new SolarPanel();
-                        panel.Section = dataFields[0];
-                        panel.Row = int.Parse(dataFields[1]);
-                        panel.Column = int.Parse(dataFields[2]);
-                        panel.Material = Enum.Parse<SolarPanelMaterial>(dataFields[3]);
-                        panel.YearInstalled = new DateTime(int.Parse(dataFields[4]), 1, 1);
-                        panel.IsTracking = bool.Parse(dataFields[5]);
-
-                        // Add object to internal data structure
-                        _panels.Add(
-                            new SolarPanelIdentifier(panel.Section, panel.Row, panel.Column),
-                            panel);
-                    }
+                    // Add object to internal data structure
+                    _panels.Add(
+                        new SolarPanelIdentifier(panel.Section, panel.Row, panel.Column),
+                        panel);
                 }
             }
             else 
@@ -183,14 +183,12 @@ namespace SolarFarm.DAL
             if (File.Exists(_fileName))
             {
                 // Write objects to file one per line
-                using (StreamWriter streamWriter = new StreamWriter(_fileName))
+                using var streamWriter = new StreamWriter(_fileName);
+                foreach (SolarPanel panel in _panels.Values)
                 {
-                    foreach (SolarPanel panel in _panels.Values)
-                    {
-                        //Saved as -> "Section,Row,Column,Material,InstallationYear,IsTracking"
-                        streamWriter.WriteLine(
-                            $"{panel.Section},{panel.Row},{panel.Column},{panel.Material},{panel.YearInstalled.Year},{panel.IsTracking}");
-                    }
+                    //Saved as -> "Section,Row,Column,Material,InstallationYear,IsTracking"
+                    streamWriter.WriteLine(
+                        $"{panel.Section},{panel.Row},{panel.Column},{panel.Material},{panel.YearInstalled.Year},{panel.IsTracking}");
                 }
             }
         }

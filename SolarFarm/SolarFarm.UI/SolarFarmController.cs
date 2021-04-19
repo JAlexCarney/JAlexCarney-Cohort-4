@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SolarFarm.Core;
 using SolarFarm.BLL;
 
@@ -14,7 +11,7 @@ namespace SolarFarm.UI
         public void Run() 
         {
             // Create Service Objcet
-            _service = new SolarPanelService();
+            _service = new SolarPanelService("production.csv");
 
             // Display Intro Header To User
             ConsoleIO.DisplayHeader("Welcome to Solar Farm");
@@ -46,6 +43,7 @@ namespace SolarFarm.UI
                     case 0:
                         // Exit
                         return;
+
                     case 1:
                         // Find Panels by Section
                         ConsoleIO.DisplayHeader("Find Panels by Section");
@@ -62,6 +60,7 @@ namespace SolarFarm.UI
                             ConsoleIO.DisplayFailure(readResult.Message);
                         }
                         break;
+
                     case 2:
                         // Add a Panel
                         ConsoleIO.DisplayHeader("Add a Panel");
@@ -76,11 +75,54 @@ namespace SolarFarm.UI
                             ConsoleIO.DisplayFailure(creationResult.Message);
                         }
                         break;
+
                     case 3:
                         // Update a Panel
+                        ConsoleIO.DisplayHeader("Update a Panel");
+                        // Get the panel from the repo that is going to be updated
+                        Result<SolarPanel> panelToUpdateResult = _service.ReadByPosition(
+                            ConsoleIO.GetString("Section: "),
+                            ConsoleIO.GetIntInRange("Row: ", 1, 250),
+                            ConsoleIO.GetIntInRange("Column: ", 1, 250));
+                        Console.WriteLine();
+                        if (panelToUpdateResult.Success)
+                        {
+                            SolarPanel newPanel = ConsoleIO.UpdatePanel(panelToUpdateResult.Data);
+
+                            Result<SolarPanel> panelUpdatedResult = _service.Update(panelToUpdateResult.Data, newPanel);
+
+                            if (panelUpdatedResult.Success)
+                            {
+                                ConsoleIO.DisplaySuccess(panelUpdatedResult.Message);
+                            }
+                            else 
+                            {
+                                ConsoleIO.DisplayFailure(panelUpdatedResult.Message);
+                            }
+                        }
+                        else 
+                        {
+                            ConsoleIO.DisplayFailure(panelToUpdateResult.Message);
+                        }
                         break;
+
                     case 4:
                         // Remove a Panel
+                        ConsoleIO.DisplayHeader("Remove a Panel");
+                        // Create Panel in Database using Service
+                        Result<SolarPanel> removeResult = _service.DeleteByPosition(
+                            ConsoleIO.GetString("Section: "),
+                            ConsoleIO.GetIntInRange("Row: ", 1, 250),
+                            ConsoleIO.GetIntInRange("Column: ", 1, 250));
+                        Console.WriteLine();
+                        if (removeResult.Success)
+                        {
+                            ConsoleIO.DisplaySuccess(removeResult.Message);
+                        }
+                        else
+                        {
+                            ConsoleIO.DisplayFailure(removeResult.Message);
+                        }
                         break;
                 }
 
