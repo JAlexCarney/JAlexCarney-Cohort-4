@@ -1,0 +1,42 @@
+Features
+	--- IMPLEMENTED ---
+	Add an Item (Working with Bugs)
+	View Items (Working)
+	Add a Forage (Working With no Known Bugs)
+	View Foragers (Working)
+	View Forages by date (Working with Bugs)
+
+	--- NOT YET IMPLEMENTED ---
+	Add a Forager
+	Create a report that displays the kilograms of each item collected on one day
+	create a report that displays the total value of each category collected on one day
+
+Requirements
+	Items (Check)
+		Name is Required (Check)
+		Name cannot be duplicated (Check)
+		Category is required (Check)
+		Dollars/Kg is required (Check)
+		Dollars/Kg must be between $0 (inedible, poisonous) and $7500 (Check)
+		Item ID is a system-generated unique sequential integer (Check)
+	Foragers
+		First name is required
+		Last name is required
+		State is required
+		The combination of first name, last name, and state cannot be duplicated
+		Forager ID is a system-generated unique sequential integer
+	Forages
+		Item is required and must exist (Check)
+		Forager is required and must exist (Check)
+		Date is required and must not be in the future (Check)
+		Kilograms must be a positive number not more than 250 (Check)
+		The combination of date Item and Forager cannot be duplicated <- TODO
+		Forage ID is a system generated GUID (Check)
+
+Bugs
+	Active
+		- Not Checking for duplicate Forages
+	Resolved
+		- Date format not inforced in view (View Forages By Date)
+		- First Letter of Last Name must be Capitalized
+		- Comma's in names create data that can not be read back which is overwritten by any new data
