@@ -178,7 +178,8 @@ namespace SustainableForaging.BLL
                 result.AddMessage($"There is no forage data on {date:d}");
                 return result;
             }
-            result.Value = forages.GroupBy(f => f.Item).ToDictionary(g => g.Key, g => g.Sum(f => f.Kilograms));
+            result.Value = forages.GroupBy(f => f.Item).OrderBy(g => g.Key.Id)
+                .ToDictionary(g => g.Key, g => g.Sum(f => f.Kilograms));
             return result;
         }
     }

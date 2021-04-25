@@ -62,8 +62,7 @@ namespace SustainableForaging.UI
                         AddItem();
                         break;
                     case MainMenuOption.ReportKgPerItem:
-                        view.DisplayStatus(false, "NOT IMPLEMENTED");
-                        view.EnterToContinue();
+                        ReportKgPerItem();
                         break;
                     case MainMenuOption.ReportCategoryValue:
                         view.DisplayStatus(false, "NOT IMPLEMENTED");
@@ -87,6 +86,7 @@ namespace SustainableForaging.UI
 
         private void ViewForagers() 
         {
+            view.DisplayHeader(MainMenuOption.ViewForagers.ToLabel());
             string lastNamePrefix = view.GetForagerNamePrefix();
             List<Forager> foragers = foragerService.FindByLastName(lastNamePrefix);
             view.DisplayForagers(foragers);
@@ -158,6 +158,23 @@ namespace SustainableForaging.UI
             {
                 string successMessage = $"Item {result.Value.Id} created.";
                 view.DisplayStatus(true, successMessage);
+            }
+            view.EnterToContinue();
+        }
+
+        private void ReportKgPerItem()
+        {
+            DateTime date = view.GetForageDate();
+            var result = forageService.ReportKilosPerItem(date);
+            if (!result.Success)
+            {
+                view.DisplayStatus(false, result.Messages);
+            }
+            else 
+            {
+                string successMessage = $"Report created.";
+                view.DisplayStatus(true, successMessage);
+                view.DisplayKilosPerItem(result.Value);
             }
             view.EnterToContinue();
         }

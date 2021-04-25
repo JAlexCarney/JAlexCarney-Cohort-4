@@ -34,6 +34,27 @@ namespace SustainableForaging.UI
             Console.ResetColor();
         }
 
+        public void PrintLineGreen(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            PrintLine(message);
+            Console.ResetColor();
+        }
+
+        public void PrintLineYellow(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            PrintLine(message);
+            Console.ResetColor();
+        }
+
+        public void PrintLineDarkYellow(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            PrintLine(message);
+            Console.ResetColor();
+        }
+
         public string ReadLineCyan() 
         {
             Console.ForegroundColor = ConsoleColor.Cyan;

@@ -25,7 +25,7 @@ namespace SustainableForaging.UI
                 MainMenuOption option = options[i];
                 if(!option.IsHidden())
                 {
-                    io.PrintLine($"{i}. {option.ToLabel()}");
+                    io.PrintLineDarkYellow($"{i}. {option.ToLabel()}");
                 }
                 min = Math.Min(min, i);
                 max = Math.Max(max, i);
@@ -86,7 +86,7 @@ namespace SustainableForaging.UI
             Category[] categories = Enum.GetValues<Category>();
             for(; index <= categories.Length; index++)
             {
-                io.PrintLine($"{index}: {categories[index - 1]}");
+                io.PrintLineDarkYellow($"{index}: {categories[index - 1]}");
             }
             index--;
             string message = $"Select a Category [1-{index}]: ";
@@ -177,18 +177,27 @@ namespace SustainableForaging.UI
         }
 
         // display only
+        internal void DisplayKilosPerItem(Dictionary<Item, decimal> values)
+        {
+            io.PrintLineYellow($"{"ID",5}  {"Name",-30}   {"Wieght",7}");
+            foreach (var value in values) 
+            {
+                io.PrintLineDarkYellow($"{value.Key.Id, 5}: {value.Key.Name,-30} =>{value.Value,7:.000}");
+            }
+        }
+
         public void DisplayHeader(string message)
         {
             io.Clear();
             io.PrintLine("");
-            io.PrintLine(message);
-            io.PrintLine(new string('=', message.Length));
+            io.PrintLineYellow(message);
+            io.PrintLineYellow(new string('=', message.Length));
         }
 
         public void DisplayException(Exception ex)
         {
             DisplayHeader("A critical error occurred:");
-            io.PrintLine(ex.Message);
+            io.PrintLineRed(ex.Message);
         }
 
         public void DisplayStatus(bool success, string message)
@@ -201,7 +210,14 @@ namespace SustainableForaging.UI
             DisplayHeader(success ? "Success" : "Error");
             foreach(string message in messages)
             {
-                io.PrintLine(message);
+                if (success)
+                {
+                    io.PrintLineGreen(message);
+                }
+                else 
+                {
+                    io.PrintLineRed(message);
+                }
             }
         }
 
@@ -209,13 +225,13 @@ namespace SustainableForaging.UI
         {
             if(forages == null || forages.Count == 0)
             {
-                io.PrintLine("No forages found.");
+                io.PrintLineRed("No forages found.");
                 return;
             }
 
             foreach(Forage forage in forages)
             {
-                io.PrintLine(
+                io.PrintLineDarkYellow(
                     string.Format("{0} {1} - {2}:{3} - Value: ${4:0.00}",
                         forage.Forager.FirstName,
                         forage.Forager.LastName,
@@ -230,20 +246,20 @@ namespace SustainableForaging.UI
         {
             if (foragers == null || foragers.Count == 0)
             {
-                io.PrintLine("No foragers found.");
+                io.PrintLineRed("No foragers found.");
                 return;
             }
 
             int index = 1;
             foreach (Forager forager in foragers.Take(25))
             {
-                io.PrintLine($"{index++}: {forager.FirstName} {forager.LastName}");
+                io.PrintLineDarkYellow($"{index++}: {forager.FirstName} {forager.LastName}");
             }
             index--;
 
             if (foragers.Count > 25)
             {
-                io.PrintLine("More than 25 foragers found. Showing first 25. Please refine your search.");
+                io.PrintLineRed("More than 25 foragers found. Showing first 25. Please refine your search.");
             }
         }
 
@@ -251,12 +267,12 @@ namespace SustainableForaging.UI
         {
             if(items == null || items.Count == 0)
             {
-                io.PrintLine("No items found");
+                io.PrintLineRed("No items found");
             }
 
             foreach(Item item in items)
             {
-                io.PrintLine($"{item.Id}: {item.Name}, {item.Category}, {item.DollarsPerKilogram:0.00} $/kg");
+                io.PrintLineDarkYellow($"{item.Id}: {item.Name}, {item.Category}, {item.DollarsPerKilogram:0.00} $/kg");
             }
         }
     }

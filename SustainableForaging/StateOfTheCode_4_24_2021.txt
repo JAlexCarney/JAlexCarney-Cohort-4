@@ -6,9 +6,9 @@ Features
 	View Foragers (Working)
 	View Forages by date (Working)
 	Add a Forager (Working)
+	Create a report that displays the kilograms of each item collected on one day (Working)
 
 	--- NOT YET IMPLEMENTED ---
-	Create a report that displays the kilograms of each item collected on one day
 	create a report that displays the total value of each category collected on one day
 
 Requirements
@@ -33,9 +33,11 @@ Requirements
 		The combination of date Item and Forager cannot be duplicated (Check)
 		Forage ID is a system generated GUID (Check)
 
-Bugs
+Bugs/Issues
 	Active
-		
+		- Formating of foragers is hard to read
+		- Formating of item is hard to read
+		- Formating of forages is hard to read
 	Resolved
 		- Date format not inforced in view (View Forages By Date)
 		- First Letter of Last Name must be Capitalized but is not prompted as such
