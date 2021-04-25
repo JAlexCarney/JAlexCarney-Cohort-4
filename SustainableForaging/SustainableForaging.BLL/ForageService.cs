@@ -182,5 +182,19 @@ namespace SustainableForaging.BLL
                 .ToDictionary(g => g.Key, g => g.Sum(f => f.Kilograms));
             return result;
         }
+
+        public Result<Dictionary<Category, decimal>> ReportValuePerCategory(DateTime date)
+        {
+            List<Forage> forages = FindByDate(date);
+            var result = new Result<Dictionary<Category, decimal>>();
+            if (forages.Count == 0)
+            {
+                result.AddMessage($"There is no forage data on {date:d}");
+                return result;
+            }
+            result.Value = forages.GroupBy(f => f.Item.Category).OrderBy(g => g.Key)
+                .ToDictionary(g => g.Key, g => g.Sum(f => f.Kilograms * f.Item.DollarsPerKilogram));
+            return result;
+        }
     }
 }

@@ -60,7 +60,7 @@ namespace SustainableForaging.UI
             int index = 1;
             foreach(Forager forager in foragers.Take(25))
             {
-                io.PrintLine($"{index++}: {forager.FirstName} {forager.LastName}");
+                io.PrintLineDarkYellow($"{index++,3}: {forager.FirstName,-10} {forager.LastName,-10}");
             }
             index--;
 
@@ -177,7 +177,16 @@ namespace SustainableForaging.UI
         }
 
         // display only
-        internal void DisplayKilosPerItem(Dictionary<Item, decimal> values)
+        public void DisplayValuePerCategory(Dictionary<Category, decimal> values)
+        {
+            io.PrintLineYellow($"{"Category",-20}   {"Wieght",7}");
+            foreach (var value in values)
+            {
+                io.PrintLineDarkYellow($"{value.Key,-20} =>{value.Value,7:C}");
+            }
+        }
+
+        public void DisplayKilosPerItem(Dictionary<Item, decimal> values)
         {
             io.PrintLineYellow($"{"ID",5}  {"Name",-30}   {"Wieght",7}");
             foreach (var value in values) 
@@ -229,10 +238,11 @@ namespace SustainableForaging.UI
                 return;
             }
 
+            io.PrintLineYellow($"{"First Name",-10} {"Last Name",-10} - {"Item Name",20}:{"Category",20} {"Value",7}");
             foreach(Forage forage in forages)
             {
                 io.PrintLineDarkYellow(
-                    string.Format("{0} {1} - {2}:{3} - Value: ${4:0.00}",
+                    string.Format("{0,-10} {1,-10} - {2,20}:{3,20} ${4,7:0.00}",
                         forage.Forager.FirstName,
                         forage.Forager.LastName,
                         forage.Item.Name,
@@ -250,12 +260,12 @@ namespace SustainableForaging.UI
                 return;
             }
 
+            io.PrintLineYellow($"{"i",3}: {"FirstName",-10} {"LastName",-10}");
             int index = 1;
             foreach (Forager forager in foragers.Take(25))
             {
-                io.PrintLineDarkYellow($"{index++}: {forager.FirstName} {forager.LastName}");
+                io.PrintLineDarkYellow($"{index++,3}: {forager.FirstName,-10} {forager.LastName,-10}");
             }
-            index--;
 
             if (foragers.Count > 25)
             {
@@ -270,9 +280,10 @@ namespace SustainableForaging.UI
                 io.PrintLineRed("No items found");
             }
 
-            foreach(Item item in items)
+            io.PrintLineYellow($"{"ID",3}: {"Name",-30} {"Category",20}, {"Value $/kg",8}");
+            foreach (Item item in items)
             {
-                io.PrintLineDarkYellow($"{item.Id}: {item.Name}, {item.Category}, {item.DollarsPerKilogram:0.00} $/kg");
+                io.PrintLineDarkYellow($"{item.Id,3}: {item.Name,-30} {item.Category,20}, {item.DollarsPerKilogram,5:0.00} $/kg");
             }
         }
     }

@@ -99,10 +99,40 @@ namespace SustainableForaging.BLL.Tests
         }
 
         [Test]
-        public void ShouldFailToReportOnDayWithNoData() 
+        public void ShouldFailToReportKilosPerItemOnDayWithNoData() 
         {
             // Act
             Result<Dictionary<Item, decimal>> result = service.ReportKilosPerItem(new DateTime(1, 1, 1));
+
+            // Assert
+            Assert.IsFalse(result.Success);
+            Assert.IsNull(result.Value);
+        }
+
+        [Test]
+        public void ShouldReportValuePerCategory()
+        {
+            // Arrange
+            Forage forage = new Forage();
+            forage.Date = new DateTime(2021, 4, 23);
+            forage.Forager = ForagerRepositoryDouble.FORAGER;
+            forage.Item = ItemRepositoryDouble.ITEM;
+            forage.Kilograms = 0.5M;
+            service.Add(forage);
+
+            // Act
+            Result<Dictionary<Category, decimal>> result = service.ReportValuePerCategory(new DateTime(2021, 4, 23));
+
+            // Assert
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(0.5M * 9.99M, result.Value[forage.Item.Category]);
+        }
+
+        [Test]
+        public void ShouldFailToReportOnValuePerCategoryDayWithNoData()
+        {
+            // Act
+            Result<Dictionary<Category, decimal>> result = service.ReportValuePerCategory(new DateTime(1, 1, 1));
 
             // Assert
             Assert.IsFalse(result.Success);

@@ -65,8 +65,7 @@ namespace SustainableForaging.UI
                         ReportKgPerItem();
                         break;
                     case MainMenuOption.ReportCategoryValue:
-                        view.DisplayStatus(false, "NOT IMPLEMENTED");
-                        view.EnterToContinue();
+                        ReportValuePerCategory();
                         break;
                     case MainMenuOption.Generate:
                         Generate();
@@ -175,6 +174,23 @@ namespace SustainableForaging.UI
                 string successMessage = $"Report created.";
                 view.DisplayStatus(true, successMessage);
                 view.DisplayKilosPerItem(result.Value);
+            }
+            view.EnterToContinue();
+        }
+
+        private void ReportValuePerCategory()
+        {
+            DateTime date = view.GetForageDate();
+            var result = forageService.ReportValuePerCategory(date);
+            if (!result.Success)
+            {
+                view.DisplayStatus(false, result.Messages);
+            }
+            else
+            {
+                string successMessage = $"Report created.";
+                view.DisplayStatus(true, successMessage);
+                view.DisplayValuePerCategory(result.Value);
             }
             view.EnterToContinue();
         }
