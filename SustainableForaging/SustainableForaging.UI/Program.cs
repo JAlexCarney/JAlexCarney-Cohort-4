@@ -11,6 +11,7 @@ namespace SustainableForaging.UI
     {
         public static void Main(string[] args)
         {
+            // Move this to Configure \/
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
             string forageFileDirectory = Path.Combine(projectDirectory, "data", "forage_data");
             string foragerFilePath = Path.Combine(projectDirectory, "data", "foragers.csv");

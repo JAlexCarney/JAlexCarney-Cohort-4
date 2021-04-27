@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31112.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DontWreckMyHouse.UI", "DontWreckMyHouse.UI\DontWreckMyHouse.UI.csproj", "{FEF86709-8F0A-49DA-8A68-9760B163A786}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E7CF9B45-B263-4EEA-829F-6C31AC13B435}"
+	ProjectSection(SolutionItems) = preProject
+		Plan.txt = Plan.txt
+		StateOfTheCode_4_26_2021.txt = StateOfTheCode_4_26_2021.txt
+		StateOfTheCode_4_27_2021.txt = StateOfTheCode_4_27_2021.txt
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DontWreckMyHouse.DAL", "DontWreckMyHouse.DAL\DontWreckMyHouse.DAL.csproj", "{EB0EA0F4-B8B3-4DAE-9CE2-6D837BCED1B3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DontWreckMyHouse.BLL", "DontWreckMyHouse.BLL\DontWreckMyHouse.BLL.csproj", "{985A49C9-9683-48A2-9B4C-9E7B8FEE0CE9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DontWreckMyHouse.Core", "DontWreckMyHouse.Core\DontWreckMyHouse.Core.csproj", "{315BB2C4-AD40-4B9D-AB11-2FF9FC2B1211}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DontWreckMyHouse.DAL.Test", "DontWreckMyHouse.DAL.Test\DontWreckMyHouse.DAL.Test.csproj", "{0B669D43-419E-47BD-B9AD-9162D7FC4E1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DontWreckMyHouse.BLL.Test", "DontWreckMyHouse.BLL.Test\DontWreckMyHouse.BLL.Test.csproj", "{26591C3E-2A1B-49FF-ABA9-6B0C4F8E1160}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FEF86709-8F0A-49DA-8A68-9760B163A786}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEF86709-8F0A-49DA-8A68-9760B163A786}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEF86709-8F0A-49DA-8A68-9760B163A786}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEF86709-8F0A-49DA-8A68-9760B163A786}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB0EA0F4-B8B3-4DAE-9CE2-6D837BCED1B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB0EA0F4-B8B3-4DAE-9CE2-6D837BCED1B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB0EA0F4-B8B3-4DAE-9CE2-6D837BCED1B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB0EA0F4-B8B3-4DAE-9CE2-6D837BCED1B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{985A49C9-9683-48A2-9B4C-9E7B8FEE0CE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{985A49C9-9683-48A2-9B4C-9E7B8FEE0CE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{985A49C9-9683-48A2-9B4C-9E7B8FEE0CE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{985A49C9-9683-48A2-9B4C-9E7B8FEE0CE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{315BB2C4-AD40-4B9D-AB11-2FF9FC2B1211}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{315BB2C4-AD40-4B9D-AB11-2FF9FC2B1211}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{315BB2C4-AD40-4B9D-AB11-2FF9FC2B1211}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{315BB2C4-AD40-4B9D-AB11-2FF9FC2B1211}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B669D43-419E-47BD-B9AD-9162D7FC4E1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B669D43-419E-47BD-B9AD-9162D7FC4E1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B669D43-419E-47BD-B9AD-9162D7FC4E1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B669D43-419E-47BD-B9AD-9162D7FC4E1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26591C3E-2A1B-49FF-ABA9-6B0C4F8E1160}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26591C3E-2A1B-49FF-ABA9-6B0C4F8E1160}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26591C3E-2A1B-49FF-ABA9-6B0C4F8E1160}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26591C3E-2A1B-49FF-ABA9-6B0C4F8E1160}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {34B3A68F-4219-4DC9-BFF9-2D62384AC53C}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,89 @@
+DontWreckMyHouse.UI
+	+ConsoleIO
+		// standard in and out
+	+View
+		// standard display functions
+	+Program
+		+Main()
+	+NinjectContainer
+		+Kernel
+		+Configure()
+	+Controller
+		+Run()
+		-MenuLoop()
+		-ViewReservationsByHost()
+		-MakeReservation()
+		-EditReservation()
+		-CancelReservation()
+
+DontWreckMyHouse.Core
+	/Models
+		+Guest
+			+Id : int(sequentail)
+			+FistName : string
+			+LastName : string
+			+Email : string("blank@blank.com")
+			+Phone : string("(###) #######")
+			+State : string(Two-Letter)
+		+Host
+			+Id : string(Guid)
+			+LastName : string
+			+Email : string("blank@blank.com")
+			+Phone : string("(###) #######")
+			+Address : string
+			+City : string
+			+State : string(Two-Letter)
+			+PostalCode : int(5-digits)
+			+StandardRate : decimal
+			+WeekendRate : decimal
+		+Reservation
+			+Id : int(sequentail)
+			+StartDate : DateTime
+			+EndDate : DateTime
+			+GuestId : int
+			+Total : decimal(calculated)
+	/Repositories
+		+IGuestRepository
+			+ReadAll() : List<Guest>
+			+ReadByEmail(string) : Guest
+		+IHostRepository
+			+ReadAll() : List<Host>
+			+ReadByEmail(string) : Host
+		+IReservationRepository
+			+Create(Reservation) : Reservation
+			+ReadByHost(Host) : List<Reservation>
+			+Delete(Reservation) : Reservation
+
+DontWreckMyHouse.BLL
+	+Result<T>
+		+Message : string
+		+Success : bool
+		+Data : T
+	+ReservationService
+		Create(Reservation) : result<Reservation>
+		ReadByHost(Host) : result<List<Reservation>>
+		ReadById(Host, ID) : result<Reservation>
+		Update(Reservation, Reservation) : result<Reservation>
+
+DontWreckMyHouse.BLL.Tests
+	/TestDoubles
+		+GuestRepositoryDouble : IGuestRepository 
+		+HostRepositoryDouble : IHostRepository
+		+ReservationRepositoryDouble : IReservationRepository
+	+ReservationServiceTest
+
+DontWreckMyHouse.DAL
+	+GuestFileRepository : IGuestRepository
+		-Load()
+		-Desearalize() : Guest
+	+HostFileRepository : IHostRepository
+		-Load()
+		-Desearalize() : Host
+	+ReservationFileRepository : IReservationRepository
+		-Save()
+		-Load()
+
+DontWreckMyHouse.DAL.Tests
+	+GuestFileRepositoryTest
+	+HostFileRepositoryTest
+	+ReservationFileRepositoryTest

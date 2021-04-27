@@ -77,6 +77,7 @@ namespace SustainableForaging.BLL.Tests
             Assert.IsFalse(result.Success);
             Assert.IsNull(result.Value);
             Assert.AreEqual(1, result.Messages.Count);
+            // Check message content
         }
 
         [Test]

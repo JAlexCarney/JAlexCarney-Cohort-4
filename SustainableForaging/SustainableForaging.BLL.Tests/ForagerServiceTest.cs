@@ -78,6 +78,7 @@ namespace SustainableForaging.BLL.Tests
             Assert.IsFalse(result.Success);
             Assert.AreEqual(null, result.Value);
             Assert.AreEqual(1, result.Messages.Count);
+            // Check that it was the expected message
         }
 
         private static Forager MakeForager()
