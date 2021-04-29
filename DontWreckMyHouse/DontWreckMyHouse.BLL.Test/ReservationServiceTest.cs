@@ -232,5 +232,165 @@ namespace DontWreckMyHouse.BLL.Test
             Assert.AreEqual(1, actual.Messages.Count);
             Assert.AreEqual("Date ranges can not overlap.", actual.Messages[0]);
         }
+
+        [Test]
+        public void ShouldFailToCreateReservationWithUnknownGuest() 
+        {
+            // Arrange
+            Reservation expected = new Reservation()
+            {
+                Id = 5,
+                StartDate = new DateTime(2000, 1, 1),
+                EndDate = new DateTime(2001, 1, 1),
+                GuestId = 2,
+                Total = 1022.50M
+            };
+
+            // Act
+            var actual = service.Create(HostRepositoryDouble.HOST, expected);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.IsFalse(actual.Success);
+            Assert.AreEqual(1, actual.Messages.Count);
+            Assert.AreEqual("Guest data could not be found.", actual.Messages[0]);
+        }
+
+        [Test]
+        public void ShouldDeleteReservation() 
+        {
+            // Act
+            var actual = service.Delete(HostRepositoryDouble.HOST, ReservationRepositoryDouble.RESERVATION);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.Success);
+            Assert.AreEqual(ReservationRepositoryDouble.RESERVATION, actual.Data);
+        }
+
+        [Test]
+        public void ShouldFailToDeleteFromUnknownHost() 
+        {
+            // Arrange
+            Host emptyHost = new Host
+            {
+                Id = "test"
+            };
+
+            // Act
+            var actual = service.Delete(emptyHost, ReservationRepositoryDouble.RESERVATION);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.IsFalse(actual.Success);
+            Assert.AreEqual(1, actual.Messages.Count);
+            Assert.AreEqual("That host has no reservations.", actual.Messages[0]);
+        }
+
+        [Test]
+        public void ShouldFailToDeleteUnknownReservation()
+        {
+            // Arrange
+            Reservation unkownReservation = new Reservation
+            {
+                Id = 3,
+                StartDate = new DateTime(2131, 1, 1),
+                EndDate = new DateTime(2132,1,1),
+                GuestId = 2,
+                Total = 5.0M
+            };
+
+            // Act
+            var actual = service.Delete(HostRepositoryDouble.HOST, unkownReservation);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.IsFalse(actual.Success);
+            Assert.AreEqual(1, actual.Messages.Count);
+            Assert.AreEqual("That reservation does not exist with that host.", actual.Messages[0]);
+        }
+
+        [Test]
+        public void ShouldFailToDeleteReservationInThePast()
+        {
+            // Arrange
+            Reservation reservation = new Reservation
+            {
+                Id = 3,
+                StartDate = new DateTime(2, 1, 1),
+                EndDate = new DateTime(3, 1, 1),
+                GuestId = 1,
+                Total = 5.0M
+            };
+            var host = new Host
+            {
+                Id = "8597c189-2352-49a2-ba9f-eb400d8dadbf",
+                LastName = "Folkerd",
+                Email = "user@website.com",
+                Phone = "(281) 1808157",
+                Address = "59778 Clove Road",
+                City = "Houston",
+                State = "TX",
+                PostalCode = 77075,
+                StandardRate = 285M,
+                WeekendRate = 356.25M
+            };
+
+            // Act
+            service.Create(host, reservation);
+            var actual = service.Delete(host, reservation);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.IsFalse(actual.Success);
+            Assert.AreEqual(1, actual.Messages.Count);
+            Assert.AreEqual("Can not delete a past reservation.", actual.Messages[0]);
+        }
+
+        [Test]
+        public void ShouldUpdateReservation() 
+        {
+            Reservation expected = new Reservation()
+            {
+                Id = 1,
+                StartDate = new DateTime(2030, 1, 1),
+                EndDate = new DateTime(2031, 1, 1),
+                GuestId = 1,
+                Total = 1022.50M
+            };
+
+            var actual = service.Update(HostRepositoryDouble.HOST, ReservationRepositoryDouble.RESERVATION, expected);
+            var actualStored = service.ReadByHost(HostRepositoryDouble.HOST);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.Success);
+            Assert.AreEqual(1, actualStored.Data.Count);
+            Assert.AreEqual(expected, actual.Data);
+            Assert.AreEqual(expected, actualStored.Data[0]);
+        }
+
+        [Test]
+        public void ShouldFailToUpdateIntoInvalidEntry() 
+        {
+            Reservation expected = new Reservation()
+            {
+                Id = 1,
+                StartDate = new DateTime(2032, 1, 1),
+                EndDate = new DateTime(2031, 1, 1),
+                GuestId = 1,
+                Total = 1022.50M
+            };
+
+            var actual = service.Update(HostRepositoryDouble.HOST, ReservationRepositoryDouble.RESERVATION, expected);
+            var actualStored = service.ReadByHost(HostRepositoryDouble.HOST);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.IsFalse(actual.Success);
+            Assert.AreEqual(1, actualStored.Data.Count);
+            Assert.IsNull(actual.Data);
+            Assert.AreEqual(ReservationRepositoryDouble.RESERVATION, actualStored.Data[0]);
+        }
     }
 }

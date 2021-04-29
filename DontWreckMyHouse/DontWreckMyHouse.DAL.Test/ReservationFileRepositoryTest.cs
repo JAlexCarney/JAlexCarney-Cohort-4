@@ -103,6 +103,50 @@ namespace DontWreckMyHouse.DAL.Test
             Assert.IsTrue(actual.Contains(expected));
         }
 
+        [Test]
+        public void ShouldDeleteReservation() 
+        {
+            // Arrange
+            Reservation expected = MakeReservation();
+            Host key = MakeHost();
+
+            // Act
+            Reservation actual = repo.Delete(key, expected);
+            var result = repo.ReadByHost(key);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.AreEqual(expected, actual);
+            Assert.IsFalse(result.Contains(expected));
+            Assert.AreEqual(1, result.Count);
+        }
+
+        [Test]
+        public void ShouldDeleteFileWithNoReservations() 
+        {
+            // Arrange
+            Reservation reservatoinOne = MakeReservation();
+            Reservation reservationTwo = new Reservation
+            {
+                Id = 2,
+                StartDate = new DateTime(2021, 11, 18),
+                EndDate = new DateTime(2021, 11, 22),
+                GuestId = 2,
+                Total = 1840.50M
+            };
+            Host key = MakeHost();
+            string filePath = Path.Combine(DIRECTORY_NAME, $"{key.Id}.csv");
+
+            // Act
+            repo.Delete(key, reservatoinOne);
+            repo.Delete(key, reservationTwo);
+            var result = repo.ReadByHost(key);
+
+            // Assert
+            Assert.IsNull(result);
+            Assert.IsFalse(File.Exists(filePath));
+        }
+
         private Reservation MakeReservation() 
         {
             var reservation = new Reservation

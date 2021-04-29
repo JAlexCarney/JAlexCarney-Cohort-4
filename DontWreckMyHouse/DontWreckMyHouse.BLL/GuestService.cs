@@ -31,5 +31,20 @@ namespace DontWreckMyHouse.BLL
             }
             return result;
         }
+
+        public Result<Guest> ReadById(int id) 
+        {
+            var result = new Result<Guest>();
+            Guest found = repo.ReadById(id);
+            if (found != null)
+            {
+                result.Data = found;
+            }
+            else
+            {
+                result.AddMessage("Failed to find guest with that ID.");
+            }
+            return result;
+        }
     }
 }

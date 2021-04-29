@@ -11,5 +11,6 @@ namespace DontWreckMyHouse.Core.Repositories
     {
         public List<Guest> ReadAll();
         public Guest ReadByEmail(string email);
+        public Guest ReadById(int id);
     }
 }

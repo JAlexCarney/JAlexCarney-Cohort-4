@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DontWreckMyHouse.Core.Models;
+using DontWreckMyHouse.BLL;
 using System.Linq;
 
 namespace DontWreckMyHouse.UI
@@ -89,19 +90,26 @@ namespace DontWreckMyHouse.UI
             }
         }
 
-        public void DisplayReservations(List<Reservation> data)
+        public void DisplayReservations(List<Reservation> data, GuestService guestService)
         {
-            if(data == null || data.Count == 0) 
+            if(data == null) 
             {
                 io.PrintLineDarkYellow("--- Empty ---");
                 return;
             }
-            var sortedData = data.OrderBy(r => r.StartDate);
-            io.PrintLineYellow($"{"ID",3} {"Start Date",10} => {"End Date",10} {"Guest ID",8} {"Total",7}");
-            foreach (var value in sortedData)
+            var sortedFutureData = data
+                .Where(r => r.StartDate.Subtract(DateTime.Now).Ticks >= 0)
+                .OrderBy(r => r.StartDate);
+            if (sortedFutureData.Count() == 0)
             {
-                //TODO: Replace Guest ID with Guest Email
-                io.PrintLineDarkYellow($"{value.Id,3} {value.StartDate,10:d} => {value.EndDate,10:d} {value.GuestId,8} {value.Total,7:C}");
+                io.PrintLineDarkYellow("--- Empty ---");
+                return;
+            }
+            io.PrintLineYellow($"{"ID",3} {"Start Date",10} => {"End Date",10} {"Guest Name",20} {"Guest Email", 30} {"Total",10}");
+            foreach (var value in sortedFutureData)
+            {
+                Guest guest = guestService.ReadById(value.GuestId).Data;
+                io.PrintLineDarkYellow($"{value.Id,3} {value.StartDate,10:d} => {value.EndDate,10:d} {$"{guest.FirstName} {guest.LastName}",20} {guest.Email,30} {value.Total,10:C}");
             }
         }
 
@@ -113,6 +121,19 @@ namespace DontWreckMyHouse.UI
             io.PrintLineDarkYellow($"Total: {reservation.Total:C}");
         }
 
+        public Reservation SelectReservationFromList(List<Reservation> reservations) 
+        {
+            while (true)
+            {
+                decimal result = io.ReadInt("Reservation ID: ");
+                if (reservations.Any(r => r.Id == result && r.StartDate.Subtract(DateTime.Now).Ticks >= 0))
+                {
+                    return reservations.Where(r => r.Id == result).FirstOrDefault();
+                }
+                io.PrintLineRed("Must select a valid ID from the list.");
+            }
+        }
+
         public string GetEmail(string from) 
         {
             return io.ReadString($"Enter {from}'s Email: ");
@@ -121,6 +142,17 @@ namespace DontWreckMyHouse.UI
         public bool GetConfirmation() 
         {
             return io.ReadBool("Is this okay? [y/n]: ");
+        }
+
+        public Reservation GetUpdatedReservation(Reservation toUpdate)
+        {
+            return new Reservation
+            {
+                Id = toUpdate.Id,
+                StartDate = io.ReadDateDefualtable("Start (MM/DD/YYYY): ", toUpdate.StartDate),
+                EndDate = io.ReadDateDefualtable("End (MM/DD/YYYY): ", toUpdate.EndDate),
+                GuestId = toUpdate.GuestId,
+            };
         }
 
         public Reservation MakeReservation(Guest guest) 

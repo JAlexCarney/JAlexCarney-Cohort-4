@@ -74,6 +74,11 @@ namespace DontWreckMyHouse.BLL
                 result.AddMessage("Reservation is missing required fields.");
                 return result;
             }
+            if (guestRepository.ReadById(reservation.GuestId) == null) 
+            {
+                result.AddMessage("Guest data could not be found.");
+                return result;
+            }
             if (DateIsAfterOrEqual(reservation.StartDate, reservation.EndDate)) 
             {
                 result.AddMessage("End date must be after start date.");
@@ -104,14 +109,52 @@ namespace DontWreckMyHouse.BLL
             return result;
         }
 
-        public Result<Reservation> ReadById(Host host, int id) 
+        public Result<Reservation> Delete(Host host, Reservation reservation) 
         {
-            throw new NotImplementedException();
+            var reservations = reservationRepository.ReadByHost(host);
+            var result = new Result<Reservation>();
+            if (reservations == null) 
+            {
+                result.AddMessage("That host has no reservations.");
+                return result;
+            }
+            if (!reservations.Contains(reservation)) 
+            {
+                result.AddMessage("That reservation does not exist with that host.");
+                return result;
+            }
+            if (reservation.StartDate.Subtract(DateTime.Now).Ticks < 0)
+            {
+                result.AddMessage("Can not delete a past reservation.");
+                return result;
+            }
+            reservationRepository.Delete(host, reservation);
+            result.Data = reservation;
+            return result;
         }
 
-        public Result<Reservation> Update(Reservation oldReservation, Reservation newReservation) 
+        public Result<Reservation> Update(Host host, Reservation oldReservation, Reservation newReservation)
         {
-            throw new NotImplementedException();
+            var updateResult = new Result<Reservation>();
+            if (oldReservation.Id != newReservation.Id
+                || oldReservation.GuestId != newReservation.GuestId)
+            {
+                updateResult.AddMessage("Cannot update Id or Guest");
+                return updateResult;
+            }
+            var deletionResult = Delete(host, oldReservation);
+            if (!deletionResult.Success)
+            {
+                return deletionResult;
+            }
+            var creationResult = Create(host, newReservation);
+            if (!creationResult.Success) 
+            {
+                Create(host, deletionResult.Data);
+                return creationResult;
+            }
+            updateResult.Data = newReservation;
+            return updateResult;
         }
     }
 }

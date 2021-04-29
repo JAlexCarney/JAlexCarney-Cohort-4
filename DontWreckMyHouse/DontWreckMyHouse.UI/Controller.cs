@@ -2,6 +2,7 @@
 using DontWreckMyHouse.Core.Models;
 using DontWreckMyHouse.BLL;
 using System;
+using System.Linq;
 
 namespace DontWreckMyHouse.UI
 {
@@ -70,7 +71,7 @@ namespace DontWreckMyHouse.UI
             view.DisplayHeader(
                     $"{host.LastName}: {host.City}, {host.State}",
                     false);
-            view.DisplayReservations(reservationList);
+            view.DisplayReservations(reservationList, guestService);
             // Prompt Continue
             view.EnterToContinue();
         }
@@ -91,7 +92,7 @@ namespace DontWreckMyHouse.UI
             view.DisplayHeader(
                 $"{host.LastName}: {host.City}, {host.State}",
                 false);
-            view.DisplayReservations(reservationsList);
+            view.DisplayReservations(reservationsList, guestService);
             // Make Reservation
             Reservation reservation = view.MakeReservation(guest);
             reservation.Total = CalculateTotal(host, reservation);
@@ -117,16 +118,45 @@ namespace DontWreckMyHouse.UI
         {
             // Display Header
             view.DisplayHeader(MainMenuOption.EditReservation.ToLabel());
-            // Get Guest
             // Get Host
+            Host host = GetHost();
+            if (host == null) { return; }
+            // Get Reservations List
+            var reservationsList = GetReservationsListNotEmpty(host);
+            if (reservationsList == null) { return; }
             // Display Reservations
-            // Select Reservation By ID
+            view.DisplayHeader(
+                $"{host.LastName}: {host.City}, {host.State}",
+                false);
+            view.DisplayReservations(reservationsList, guestService);
+            // Check if there is anything to update
+            if (reservationsList.Where(r => r.StartDate.Subtract(DateTime.Now).Ticks >= 0).Count() == 0)
+            {
+                view.DisplayStatus(false, "There are no future reservations that can be updated.");
+                view.EnterToContinue();
+                return;
+            }
+            // Select reservation by Id
+            Reservation toUpdate = view.SelectReservationFromList(reservationsList);
             // Display Header
-            // Get new Start Date or Defualt
-            // Get new End Date or Default
-            // Display Summary
+            view.DisplayHeader($"Editing Reservation {toUpdate.Id}");
+            // Get new reservation information
+            Reservation updated = view.GetUpdatedReservation(toUpdate);
+            updated.Total = CalculateTotal(host, updated);
+            // Display Reservation Summary
+            view.DisplayReservationSummary(toUpdate);
             // Get Confirmation
+            if (!view.GetConfirmation()) { return; }
+            // Update reservation
+            var result = reservationService.Update(host, toUpdate, updated);
             // Display Success or Error
+            if (!result.Success)
+            {
+                view.DisplayStatus(false, result.Messages);
+                view.EnterToContinue();
+                return;
+            }
+            view.DisplayStatus(true, $"Reservation {result.Data.Id} updated.");
             // Prompt Continue
             view.EnterToContinue();
         }
@@ -135,11 +165,37 @@ namespace DontWreckMyHouse.UI
         {
             // Display Header
             view.DisplayHeader(MainMenuOption.CancelReservation.ToLabel());
-            // Get Guest
             // Get Host
-            // Display existing reservations
+            Host host = GetHost();
+            if (host == null) { return; }
+            // Get Reservations List
+            var reservationsList = GetReservationsListNotEmpty(host);
+            if (reservationsList == null) { return; }
+            // Display Reservations
+            view.DisplayHeader(
+                $"{host.LastName}: {host.City}, {host.State}",
+                false);
+            view.DisplayReservations(reservationsList, guestService);
+            // Check if there is anything to delete
+            if (reservationsList.Where(r => r.StartDate.Subtract(DateTime.Now).Ticks >= 0).Count() == 0) 
+            {
+                view.DisplayStatus(false, "There are no future reservations that can be canceled.");
+                view.EnterToContinue();
+                return;
+            }
             // Select reservation by Id
+            Reservation toCancel = view.SelectReservationFromList(reservationsList);
+            // Delete Selected Reservation
+            var result = reservationService.Delete(host, toCancel);
             // Display Success or Error
+            if (!result.Success)
+            {
+                view.DisplayStatus(false, result.Messages);
+                view.EnterToContinue();
+                return;
+            }
+            view.DisplayStatus(true, $"Reservation {result.Data.Id} canceled.");
+            // Prompt Continue
             view.EnterToContinue();
         }
 
@@ -183,7 +239,21 @@ namespace DontWreckMyHouse.UI
             var reservationsResult = reservationService.ReadByHost(host);
             if (!reservationsResult.Success)
             {
-                view.DisplayStatusShort(false, reservationsResult.Messages);
+                return null;
+            }
+            string successMessage = $"Reservations Found Under Host.";
+            view.DisplayStatusShort(true, successMessage);
+            return reservationsResult.Data;
+        }
+
+        private List<Reservation> GetReservationsListNotEmpty(Host host)
+        {
+            var reservationsResult = reservationService.ReadByHost(host);
+            if (!reservationsResult.Success)
+            {
+                view.DisplayStatus(false, reservationsResult.Messages);
+                // Prompt Continue
+                view.EnterToContinue();
                 return null;
             }
             string successMessage = $"Reservations Found Under Host.";

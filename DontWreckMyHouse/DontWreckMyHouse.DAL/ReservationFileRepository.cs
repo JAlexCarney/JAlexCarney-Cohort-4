@@ -44,7 +44,18 @@ namespace DontWreckMyHouse.DAL
 
         public Reservation Delete(Host host, Reservation reservation)
         {
-            throw new NotImplementedException();
+            reservations[host.Id].Remove(reservation);
+            if (reservations[host.Id].Count == 0)
+            {
+                string filePath = Path.Combine(directoryName, $"{host.Id}.csv");
+                File.Delete(filePath);
+                reservations.Remove(host.Id);
+            }
+            else
+            {
+                Save(host.Id);
+            }
+            return reservation;
         }
 
         public List<Reservation> ReadByHost(Host host)
@@ -61,6 +72,7 @@ namespace DontWreckMyHouse.DAL
             string filePath = Path.Combine(directoryName, $"{key}.csv");
             try
             {
+                File.WriteAllText(filePath, "");
                 using StreamWriter writer = new StreamWriter(filePath);
                 writer.WriteLine(HEADER);
 

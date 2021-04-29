@@ -44,7 +44,15 @@ namespace DontWreckMyHouse.BLL.Test.TestDoubles
 
         public Reservation Delete(Host host, Reservation reservation)
         {
-            throw new NotImplementedException();
+            if (reservations.ContainsKey(host.Id))
+            {
+                reservations[host.Id].Remove(reservation);
+                if (reservations[host.Id].Count == 0) 
+                {
+                    reservations.Remove(host.Id);
+                }
+            }
+            return reservation;
         }
 
         public List<Reservation> ReadByHost(Host host)

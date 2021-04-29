@@ -35,5 +35,10 @@ namespace DontWreckMyHouse.BLL.Test.TestDoubles
         {
             return guests.Where(g => g.Email == email).FirstOrDefault();
         }
+
+        public Guest ReadById(int id)
+        {
+            return guests.Where(g => g.Id == id).FirstOrDefault();
+        }
     }
 }

@@ -188,5 +188,23 @@ namespace DontWreckMyHouse.UI
                 PrintLineRed(INVALID_DATE);
             }
         }
+
+        internal DateTime ReadDateDefualtable(string prompt, DateTime defualt)
+        {
+            DateTime result;
+            while (true)
+            {
+                string input = ReadRequiredString(prompt);
+                if (string.IsNullOrEmpty(input)) 
+                {
+                    return defualt;
+                }
+                if (DateTime.TryParse(input, out result))
+                {
+                    return result.Date;
+                }
+                PrintLineRed(INVALID_DATE);
+            }
+        }
     }
 }

@@ -56,6 +56,29 @@ namespace DontWreckMyHouse.DAL.Test
             Assert.IsNull(actual);
         }
 
+        [Test]
+        public void ShouldReadByID()
+        {
+            // Arrange
+            var expected = MakeGuest();
+
+            // Act
+            var actual = repo.ReadById(1);
+
+            // Assert
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ShouldFailToReadIfIDNotFound()
+        {
+            // Act
+            var actual = repo.ReadById(27);
+
+            // Assert
+            Assert.IsNull(actual);
+        }
+
         private Guest MakeGuest()
         {
             var guest = new Guest

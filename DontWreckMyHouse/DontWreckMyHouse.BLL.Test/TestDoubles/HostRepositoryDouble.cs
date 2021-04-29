@@ -28,6 +28,19 @@ namespace DontWreckMyHouse.BLL.Test.TestDoubles
         public HostRepositoryDouble()
         {
             hosts.Add(HOST);
+            hosts.Add(new Host
+            {
+                Id = "8597c189-2352-49a2-ba9f-eb400d8dadbf",
+                LastName = "Folkerd",
+                Email = "user@website.com",
+                Phone = "(281) 1808157",
+                Address = "59778 Clove Road",
+                City = "Houston",
+                State = "TX",
+                PostalCode = 77075,
+                StandardRate = 285M,
+                WeekendRate = 356.25M
+            });
         }
 
         public List<Host> ReadAll()
