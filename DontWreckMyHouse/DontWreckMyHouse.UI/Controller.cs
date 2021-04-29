@@ -144,7 +144,7 @@ namespace DontWreckMyHouse.UI
             Reservation updated = view.GetUpdatedReservation(toUpdate);
             updated.Total = CalculateTotal(host, updated);
             // Display Reservation Summary
-            view.DisplayReservationSummary(toUpdate);
+            view.DisplayReservationSummary(updated);
             // Get Confirmation
             if (!view.GetConfirmation()) { return; }
             // Update reservation
@@ -202,36 +202,78 @@ namespace DontWreckMyHouse.UI
         // Helper Functions
         private Host GetHost() 
         {
-            string hostEmail = view.GetEmail("host");
-            var hostResult = hostService.ReadByEmail(hostEmail);
-            if (!hostResult.Success)
+            string hostEmailPrefix = view.GetStartOfEmail("Host");
+            var hostsResult = hostService.ReadAll();
+            if (!hostsResult.Success) 
             {
-                view.DisplayStatusShort(false, hostResult.Messages);
+                view.DisplayStatus(false, hostsResult.Messages);
                 // Prompt Continue
                 view.EnterToContinue();
                 return null;
             }
+            var hosts = hostsResult.Data;
+            if (hosts.Any(h => h.Email == hostEmailPrefix))
+            {
+                var hostResult = hostService.ReadByEmail(hostEmailPrefix);
+                if (!hostResult.Success)
+                {
+                    view.DisplayStatus(false, hostResult.Messages);
+                    // Prompt Continue
+                    view.EnterToContinue();
+                    return null;
+                }
 
-            string successMessage = $"Found Host.";
-            view.DisplayStatusShort(true, successMessage);
-            return hostResult.Data;
+                string successMessage = $"Found Host.";
+                view.DisplayStatusShort(true, successMessage);
+                return hostResult.Data;
+            }
+            var options = hosts.Where(h => h.Email.StartsWith(hostEmailPrefix)).Take(20).ToList();
+            if (options.Count() == 0) 
+            {
+                view.DisplayStatus(false, $"No hosts found whose emails start with \"{hostEmailPrefix}\"");
+                // Prompt Continue
+                view.EnterToContinue();
+                return null;
+            }
+            return view.SelectHostFromList(options);
         }
 
         private Guest GetGuest()
         {
-            string guestEmail = view.GetEmail("guest");
-            var guestResult = guestService.ReadByEmail(guestEmail);
-            if (!guestResult.Success)
+            string guestEmailPrefix = view.GetStartOfEmail("Guest");
+            var guestsResult = guestService.ReadAll();
+            if (!guestsResult.Success)
             {
-                view.DisplayStatusShort(false, guestResult.Messages);
+                view.DisplayStatus(false, guestsResult.Messages);
                 // Prompt Continue
                 view.EnterToContinue();
                 return null;
             }
+            var guests = guestsResult.Data;
+            if (guests.Any(h => h.Email == guestEmailPrefix))
+            {
+                var guestResult = guestService.ReadByEmail(guestEmailPrefix);
+                if (!guestResult.Success)
+                {
+                    view.DisplayStatus(false, guestResult.Messages);
+                    // Prompt Continue
+                    view.EnterToContinue();
+                    return null;
+                }
 
-            string successMessage = $"Found Guest.";
-            view.DisplayStatusShort(true, successMessage);
-            return guestResult.Data;
+                string successMessage = $"Found Guest.";
+                view.DisplayStatusShort(true, successMessage);
+                return guestResult.Data;
+            }
+            var options = guests.Where(h => h.Email.StartsWith(guestEmailPrefix)).Take(20).ToList();
+            if (options.Count() == 0)
+            {
+                view.DisplayStatus(false, $"No guests found whose emails start with \"{guestEmailPrefix}\"");
+                // Prompt Continue
+                view.EnterToContinue();
+                return null;
+            }
+            return view.SelectGuestFromList(options);
         }
 
         private List<Reservation> GetReservationsList(Host host) 
@@ -264,7 +306,7 @@ namespace DontWreckMyHouse.UI
         private decimal CalculateTotal(Host host, Reservation reservation) 
         {
             decimal total = 0M;
-            for(DateTime date = reservation.StartDate; date != reservation.EndDate; date = date.AddDays(1)) 
+            for(DateTime date = reservation.StartDate; date.Subtract(reservation.EndDate).Ticks < 0; date = date.AddDays(1)) 
             {
                 switch (date.DayOfWeek) 
                 {

@@ -18,6 +18,8 @@ namespace DontWreckMyHouse.UI
             = "[INVALID] Enter a state in Two-Letter format.";
         private const string INVALID_DATE
             = "[INVALID] Enter a valid date format.";
+        private const string FUTURE_DATE
+            = "[INVALID] Enter a future date.";
         private const string INVALID_BOOL
             = "[INVALID] Please enter 'y' or 'n'.";
 
@@ -189,12 +191,33 @@ namespace DontWreckMyHouse.UI
             }
         }
 
-        internal DateTime ReadDateDefualtable(string prompt, DateTime defualt)
+        public DateTime ReadFutureDate(string prompt)
         {
             DateTime result;
             while (true)
             {
                 string input = ReadRequiredString(prompt);
+                if (DateTime.TryParse(input, out result))
+                {
+                    if (result.Subtract(DateTime.Now).Ticks > 0)
+                    {
+                        return result.Date;
+                    }
+                    PrintLineRed(FUTURE_DATE);
+                }
+                else 
+                {
+                    PrintLineRed(INVALID_DATE);
+                }
+            }
+        }
+
+        internal DateTime ReadDateDefualtable(string prompt, DateTime defualt)
+        {
+            DateTime result;
+            while (true)
+            {
+                string input = ReadString(prompt);
                 if (string.IsNullOrEmpty(input)) 
                 {
                     return defualt;

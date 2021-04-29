@@ -17,6 +17,21 @@ namespace DontWreckMyHouse.BLL
             this.repo = repo;
         }
 
+        public Result<List<Guest>> ReadAll()
+        {
+            var result = new Result<List<Guest>>();
+            List<Guest> found = repo.ReadAll();
+            if (found != null)
+            {
+                result.Data = found;
+            }
+            else
+            {
+                result.AddMessage("Failed to find guests.");
+            }
+            return result;
+        }
+
         public Result<Guest> ReadByEmail(string email)
         {
             var result = new Result<Guest>();

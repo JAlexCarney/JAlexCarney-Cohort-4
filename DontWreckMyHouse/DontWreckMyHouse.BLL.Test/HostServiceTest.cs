@@ -15,6 +15,22 @@ namespace DontWreckMyHouse.BLL.Test
         }
 
         [Test]
+        public void ShouldReadAll()
+        {
+            // Arrange
+            Host expected = HostRepositoryDouble.HOST;
+
+            // Act
+            var actual = service.ReadAll();
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.Success);
+            Assert.AreEqual(0, actual.Messages.Count);
+            Assert.AreEqual(expected, actual.Data[0]);
+        }
+
+        [Test]
         public void ShouldReadHostByEmail()
         {
             // Arrange

@@ -32,7 +32,14 @@ namespace DontWreckMyHouse.DAL
             }
             else 
             {
-                nextIds.Add(host.Id, 1);
+                if (!nextIds.ContainsKey(host.Id))
+                {
+                    nextIds.Add(host.Id, 1);
+                }
+                else 
+                {
+                    nextIds[host.Id] = 1;
+                }
                 reservation.Id = nextIds[host.Id];
                 var newList = new List<Reservation>();
                 newList.Add(reservation);

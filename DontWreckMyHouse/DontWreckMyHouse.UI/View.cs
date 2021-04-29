@@ -90,6 +90,36 @@ namespace DontWreckMyHouse.UI
             }
         }
 
+        private void DisplayHosts(IEnumerable<Host> hosts)
+        {
+            io.PrintLineYellow($"{"#",3} {"Email",30} {"Last Name", 12} {"Location"}");
+            int i = 1;
+            foreach (var host in hosts)
+            {
+                io.PrintLineDarkYellow($"{i,3} {host.Email,30:d} {host.LastName,12} {$"{host.City}, {host.State}"}");
+                i++;
+            }
+            if (i == 21) 
+            {
+                io.PrintLineRed("Too many results, only showing first 20");
+            }
+        }
+
+        private void DisplayGuests(IEnumerable<Guest> guests)
+        {
+            io.PrintLineYellow($"{"#",3} {"Email",30} {"Name",20}");
+            int i = 1;
+            foreach (var guest in guests)
+            {
+                io.PrintLineDarkYellow($"{i,3} {guest.Email,30:d} {$"{guest.FirstName} {guest.LastName}",20}");
+                i++;
+            }
+            if (i == 21)
+            {
+                io.PrintLineRed("Too many results, only showing first 20");
+            }
+        }
+
         public void DisplayReservations(List<Reservation> data, GuestService guestService)
         {
             if(data == null) 
@@ -121,11 +151,11 @@ namespace DontWreckMyHouse.UI
             io.PrintLineDarkYellow($"Total: {reservation.Total:C}");
         }
 
-        public Reservation SelectReservationFromList(List<Reservation> reservations) 
+        public Reservation SelectReservationFromList(IEnumerable<Reservation> reservations) 
         {
             while (true)
             {
-                decimal result = io.ReadInt("Reservation ID: ");
+                int result = io.ReadInt("Reservation ID: ");
                 if (reservations.Any(r => r.Id == result && r.StartDate.Subtract(DateTime.Now).Ticks >= 0))
                 {
                     return reservations.Where(r => r.Id == result).FirstOrDefault();
@@ -134,9 +164,42 @@ namespace DontWreckMyHouse.UI
             }
         }
 
+        public Host SelectHostFromList(List<Host> options)
+        {
+            DisplayHosts(options);
+            while (true)
+            {
+                int result = io.ReadInt("Host #: ");
+                if (result > 0 && result <= options.Count)
+                {
+                    return options[result-1];
+                }
+                io.PrintLineRed("Must select a # from the list.");
+            }
+        }
+
+        public Guest SelectGuestFromList(List<Guest> options)
+        {
+            DisplayGuests(options);
+            while (true)
+            {
+                int result = io.ReadInt("Guest #: ");
+                if (result > 0 && result <= options.Count)
+                {
+                    return options[result - 1];
+                }
+                io.PrintLineRed("Must select a # from the list.");
+            }
+        }
+
         public string GetEmail(string from) 
         {
-            return io.ReadString($"Enter {from}'s Email: ");
+            return io.ReadRequiredString($"Enter {from}'s Email: ");
+        }
+
+        public string GetStartOfEmail(string from)
+        {
+            return io.ReadRequiredString($"{from}'s Email Starts With: ");
         }
 
         public bool GetConfirmation() 
@@ -160,10 +223,10 @@ namespace DontWreckMyHouse.UI
             Reservation reservation = new Reservation()
             {
                 Id = -1,
-                StartDate = io.ReadDate("Start (MM/DD/YYYY): "),
-                EndDate = io.ReadDate("End (MM/DD/YYYY): "),
+                StartDate = io.ReadFutureDate("Start (MM/DD/YYYY): "),
+                EndDate = io.ReadFutureDate("End (MM/DD/YYYY): "),
                 GuestId = guest.Id,
-                Total = 0.0M //TODO: Calculate total cost
+                Total = 0.0M
             };
             return reservation;
         }

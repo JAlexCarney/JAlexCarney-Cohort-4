@@ -17,7 +17,7 @@ Models
 Requirements
 ============
 	View Reservations for Host
-		- The user may enter a value that uniquely identifies a host or they can search for a host and pick one out of a list <=
+		- The user may enter a value that uniquely identifies a host or they can search for a host and pick one out of a list (Check)
 		- If the host is not found, display a message (Check)
 		- If the host has no reservations, display a message (Check)
 		- Show all reservations for that host (Check)
@@ -25,8 +25,8 @@ Requirements
 		- Sort reservations in a meaningful way (Check)
 
 	Make a Reservation
-		- The user may enter a value that uniquely identifies a guest or they can search for a guest and pick one out of a list <=
-		- The user may enter a value that uniquely identifies a host or they can search for a host and pick one out of list <=
+		- The user may enter a value that uniquely identifies a guest or they can search for a guest and pick one out of a list (Check)
+		- The user may enter a value that uniquely identifies a host or they can search for a host and pick one out of list (Check)
 		- Show all future reservations for that host so the user can choose avalible dates (Check)
 		- Enter a start and end date for the reservation (Check)
 		- Calculate the total, display a summary, and ask the user to confirm (Check)
@@ -39,7 +39,7 @@ Requirements
 		- The guest and host must already exist in the "database". Guests and hosts cannot be created (Check)
 		- The start date must come before the end date (Check)
 		- The reservation may never overlap existing reservation dates (Check)
-		- The start date must be in the future <=
+		- The start date must be in the future (Check)
 
 	Edit a Reservation
 		- Find a reservation (Check)
@@ -68,7 +68,7 @@ Technical Requirements
 	- Reservation identifiers are unique per host, not unique across application (Check)
 	- A Combonation of Host and Reservation identifiers is needed to uniquely identify a reservation (Check)
 	- Handle IO Exeptions in DAL <=
-		- ILogger (Console, File, Null)
+		- ILogger (Console, File, Null) <=
 
 Bugs/Issues
 ===========
