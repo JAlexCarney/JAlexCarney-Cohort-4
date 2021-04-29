@@ -392,5 +392,39 @@ namespace DontWreckMyHouse.BLL.Test
             Assert.IsNull(actual.Data);
             Assert.AreEqual(ReservationRepositoryDouble.RESERVATION, actualStored.Data[0]);
         }
+
+        [Test]
+        public void ShouldFailToUpdateIntoOverlappingDates()
+        {
+            Reservation valid = new Reservation()
+            {
+                Id = 1,
+                StartDate = new DateTime(2032, 1, 1),
+                EndDate = new DateTime(2033, 1, 1),
+                GuestId = 1,
+                Total = 1022.50M
+            };
+            Reservation expected = new Reservation()
+            {
+                Id = 1,
+                StartDate = new DateTime(2032, 6, 6),
+                EndDate = new DateTime(2034, 1, 1),
+                GuestId = 1,
+                Total = 1022.50M
+            };
+
+            service.Create(HostRepositoryDouble.HOST, valid);
+            var actual = service.Update(HostRepositoryDouble.HOST, ReservationRepositoryDouble.RESERVATION, expected);
+            var actualStored = service.ReadByHost(HostRepositoryDouble.HOST);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.IsFalse(actual.Success);
+            Assert.IsNull(actual.Data);
+            Assert.AreEqual("Date ranges can not overlap.", actual.Messages[0]);
+            Assert.AreEqual(2, actualStored.Data.Count);
+            Assert.IsTrue(actualStored.Data.Contains(valid));
+        }
+
     }
 }
