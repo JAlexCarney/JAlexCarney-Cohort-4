@@ -4,21 +4,21 @@ using DontWreckMyHouse.Core.Models;
 
 namespace DontWreckMyHouse.BLL.Test
 {
-    class HostServiceTest
+    class GuestServiceTest
     {
-        private HostService service;
+        private GuestService service;
 
         [SetUp]
-        public void SetUp() 
+        public void SetUp()
         {
-            service = new HostService(new HostRepositoryDouble());
+            service = new GuestService(new GuestRepositoryDouble());
         }
 
         [Test]
         public void ShouldReadHostByEmail()
         {
             // Arrange
-            Host expected = HostRepositoryDouble.HOST;
+            Guest expected = GuestRepositoryDouble.GUEST;
 
             // Act
             var actual = service.ReadByEmail(expected.Email);
@@ -40,7 +40,7 @@ namespace DontWreckMyHouse.BLL.Test
             Assert.IsNotNull(actual);
             Assert.IsFalse(actual.Success);
             Assert.AreEqual(1, actual.Messages.Count);
-            Assert.AreEqual("Failed to find host with that email.", actual.Messages[0]);
+            Assert.AreEqual("Failed to find guest with that email.", actual.Messages[0]);
             Assert.IsNull(actual.Data);
         }
     }

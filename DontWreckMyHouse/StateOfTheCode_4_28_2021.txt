@@ -1,0 +1,78 @@
+Features
+========
+	--- IMPLEMENTED ---
+		- The administrator may view existing reservations
+		- The administrator may create a reservation for a guest with a host
+
+	--- NOT YET IMPLEMENTED ---
+		- The administrator may edit existing reservations
+		- The administrator may cancel a future reservation
+
+Models
+======
+	- Guest (Check)
+	- Host (Check)
+	- Reservation (Check)
+
+Requirements
+============
+	View Reservations for Host
+		- The user may enter a value that uniquely identifies a host or they can search for a host and pick one out of a list <=
+		- If the host is not found, display a message (Check)
+		- If the host has no reservations, display a message (Check)
+		- Show all reservations for that host (Check)
+		- Show useful information for each reservation: the guest, dates, totals, etc. <=
+		- Sort reservations in a meaningful way (Check)
+
+	Make a Reservation
+		- The user may enter a value that uniquely identifies a guest or they can search for a guest and pick one out of a list <=
+		- The user may enter a value that uniquely identifies a host or they can search for a host and pick one out of list <=
+		- Show all future reservations for that host so the user can choose avalible dates (Check)
+		- Enter a start and end date for the reservation (Check)
+		- Calculate the total, display a summary, and ask the user to confirm (Check)
+			- The reservation total is based on the host's standard rate and weekend rate (Check)
+			- For each day in the reservation, if it's a weekend the weekend rate applies (Check)
+			- For each day in the reservation, if it's a week day the standard rate applies (Check)
+		- On confirmation, save the reservation (Check)
+
+		- Guest, Host and start and end dates are required (Check)
+		- The guest and host must already exist in the "database". Guests and hosts cannot be created (Check)
+		- The start date must come before the end date (Check)
+		- The reservation may never overlap existing reservation dates (Check)
+		- The start date must be in the future <=
+
+	Edit a Reservation
+		- Find a reservation
+		- Start and end date can be edited. No other data can be edited
+		- Recalculate the total, display a summary, and ask the user to confirm
+
+		- Guest, host and start and end dates are required
+		- The guest and host must already exist in the "database". Guests and hosts cannot be created
+		- The start date must come before the end date
+		- The reservation may never overlap existing reservation dates
+
+	Cancel a Reservation
+		- Find a reservation
+		- Only a future reservations are shown
+		- On success, display a message
+
+		- You cannot cancel a reservation that's in the past
+
+Technical Requirements
+======================
+	- Must be a console project (Check)
+	- Dependency injection configured with Ninject
+	- All financial math must use decimal
+	- Dates must be DateTime, never strings
+	- All file data must be represented in models in the application
+	- Reservation identifiers are unique per host, not unique across application
+	- A Combonation of Host and Reservation identifiers is needed to uniquely identify a reservation
+	- Handle IO Exeptions in DAL
+		- ILogger (Console, File, Null)
+
+Bugs/Issues
+===========
+	Active
+		-
+	Resolved
+		-

@@ -6,17 +6,22 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using DontWreckMyHouse.Core.Repositories;
 using DontWreckMyHouse.Core.Models;
+using System.IO;
 
 namespace DontWreckMyHouse.DAL.Test
 {
     class ReservationFileRepositoryTest
     {
         private IReservationRepository repo;
-        
+        private const string DIRECTORY_NAME = "TestReservations";
+        private const string TEST_FILE_PATH = @"TestReservations\8597c189-2352-49a2-ba9f-eb400d8dadbf.csv";
+        private const string SEED_FILE_PATH = @"TestReservations\ReservationData.csv";
+
         [SetUp]
         public void SetUp() 
         {
-            repo = new ReservationFileRepository("TestReservations");
+            File.Copy(SEED_FILE_PATH, TEST_FILE_PATH, true);
+            repo = new ReservationFileRepository(DIRECTORY_NAME);
         }
 
         [Test]
@@ -48,6 +53,56 @@ namespace DontWreckMyHouse.DAL.Test
             Assert.IsNull(actual);
         }
 
+        [Test]
+        public void ShouldCreateReservationUnderHostWithUniqueId() 
+        {
+            // Arrange
+            Reservation expected = MakeNewReservation();
+            Host key = MakeHost();
+
+            // Act
+            Reservation actual = repo.Create(key, expected);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.AreEqual(3, actual.Id);
+        }
+
+        [Test]
+        public void ShouldReadReservationAfterItIsCreated() 
+        {
+            // Arrange
+            Reservation expected = MakeNewReservation();
+            Host key = MakeHost();
+
+            // Act
+            repo.Create(key, expected);
+            List<Reservation> actual = repo.ReadByHost(key);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.AreEqual(3, actual.Count);
+            Assert.IsTrue(actual.Contains(expected));
+        }
+
+        [Test]
+        public void ShouldSaveToFileAfterCreate() 
+        {
+            // Arrange
+            Reservation expected = MakeNewReservation();
+            Host key = MakeHost();
+
+            // Act
+            repo.Create(key, expected);
+            repo = new ReservationFileRepository(DIRECTORY_NAME);
+            List<Reservation> actual = repo.ReadByHost(key);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.AreEqual(3, actual.Count);
+            Assert.IsTrue(actual.Contains(expected));
+        }
+
         private Reservation MakeReservation() 
         {
             var reservation = new Reservation
@@ -55,6 +110,19 @@ namespace DontWreckMyHouse.DAL.Test
                 Id = 1,
                 StartDate = new DateTime(2022, 2, 11),
                 EndDate = new DateTime(2022, 2, 13),
+                GuestId = 1,
+                Total = 1022.50M
+            };
+            return reservation;
+        }
+
+        private Reservation MakeNewReservation()
+        {
+            var reservation = new Reservation
+            {
+                Id = -1,
+                StartDate = new DateTime(2025, 2, 11),
+                EndDate = new DateTime(2025, 2, 13),
                 GuestId = 1,
                 Total = 1022.50M
             };

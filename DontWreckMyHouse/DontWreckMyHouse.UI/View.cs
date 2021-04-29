@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DontWreckMyHouse.Core.Models;
+using System.Linq;
 
 namespace DontWreckMyHouse.UI
 {
@@ -41,6 +42,7 @@ namespace DontWreckMyHouse.UI
 
         public void EnterToContinue()
         {
+            io.PrintLine("");
             io.ReadString("Press [Enter] to continue.");
         }
 
@@ -65,19 +67,73 @@ namespace DontWreckMyHouse.UI
             }
         }
 
+        public void DisplayStatusShort(bool success, string message)
+        {
+            DisplayStatusShort(success, new List<string>() { message });
+        }
+
+        public void DisplayStatusShort(bool success, List<string> messages)
+        {
+            foreach (string message in messages)
+            {
+                if (success)
+                {
+                    io.PrintLineGreen("[Success]");
+                    io.PrintLineGreen(message);
+                }
+                else
+                {
+                    io.PrintLineRed("[Error]");
+                    io.PrintLineRed(message);
+                }
+            }
+        }
+
         public void DisplayReservations(List<Reservation> data)
         {
+            if(data == null || data.Count == 0) 
+            {
+                io.PrintLineDarkYellow("--- Empty ---");
+                return;
+            }
+            var sortedData = data.OrderBy(r => r.StartDate);
             io.PrintLineYellow($"{"ID",3} {"Start Date",10} => {"End Date",10} {"Guest ID",8} {"Total",7}");
-            foreach (var value in data)
+            foreach (var value in sortedData)
             {
                 //TODO: Replace Guest ID with Guest Email
                 io.PrintLineDarkYellow($"{value.Id,3} {value.StartDate,10:d} => {value.EndDate,10:d} {value.GuestId,8} {value.Total,7:C}");
             }
         }
 
+        public void DisplayReservationSummary(Reservation reservation) 
+        {
+            DisplayHeader("Summary", false);
+            io.PrintLineDarkYellow($"Start: {reservation.StartDate:d}");
+            io.PrintLineDarkYellow($"End  : {reservation.EndDate:d}");
+            io.PrintLineDarkYellow($"Total: {reservation.Total:C}");
+        }
+
         public string GetEmail(string from) 
         {
             return io.ReadString($"Enter {from}'s Email: ");
+        }
+
+        public bool GetConfirmation() 
+        {
+            return io.ReadBool("Is this okay? [y/n]: ");
+        }
+
+        public Reservation MakeReservation(Guest guest) 
+        {
+            Reservation reservation = new Reservation()
+            {
+                Id = -1,
+                StartDate = io.ReadDate("Start (MM/DD/YYYY): "),
+                EndDate = io.ReadDate("End (MM/DD/YYYY): "),
+                GuestId = guest.Id,
+                Total = 0.0M //TODO: Calculate total cost
+            };
+            return reservation;
         }
     }
 }

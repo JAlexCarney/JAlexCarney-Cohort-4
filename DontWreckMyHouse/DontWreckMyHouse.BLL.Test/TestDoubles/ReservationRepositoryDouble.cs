@@ -29,7 +29,17 @@ namespace DontWreckMyHouse.BLL.Test.TestDoubles
 
         public Reservation Create(Host host, Reservation reservation)
         {
-            throw new NotImplementedException();
+            if (reservations.ContainsKey(host.Id))
+            {
+                reservations[host.Id].Add(reservation);
+            }
+            else
+            {
+                var newList = new List<Reservation>();
+                newList.Add(reservation);
+                reservations.Add(host.Id, newList);
+            }
+            return reservation;
         }
 
         public Reservation Delete(Host host, Reservation reservation)

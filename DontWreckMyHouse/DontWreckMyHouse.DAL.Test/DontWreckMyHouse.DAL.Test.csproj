@@ -27,6 +27,9 @@
     <None Update="TestReservations\8597c189-2352-49a2-ba9f-eb400d8dadbf.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestReservations\ReservationData.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

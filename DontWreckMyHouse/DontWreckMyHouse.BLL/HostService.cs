@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DontWreckMyHouse.Core.Repositories;
+﻿using DontWreckMyHouse.Core.Repositories;
 using DontWreckMyHouse.Core.Models;
 
 namespace DontWreckMyHouse.BLL
@@ -17,7 +12,7 @@ namespace DontWreckMyHouse.BLL
             this.repo = repo;
         }
 
-        public Result<Host> ReadHostByEmail(string email)
+        public Result<Host> ReadByEmail(string email)
         {
             var result = new Result<Host>();
             Host found = repo.ReadByEmail(email);

@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Plan.txt = Plan.txt
 		StateOfTheCode_4_26_2021.txt = StateOfTheCode_4_26_2021.txt
 		StateOfTheCode_4_27_2021.txt = StateOfTheCode_4_27_2021.txt
+		StateOfTheCode_4_28_2021.txt = StateOfTheCode_4_28_2021.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DontWreckMyHouse.DAL", "DontWreckMyHouse.DAL\DontWreckMyHouse.DAL.csproj", "{EB0EA0F4-B8B3-4DAE-9CE2-6D837BCED1B3}"
@@ -20,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DontWreckMyHouse.Core", "Do
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DontWreckMyHouse.DAL.Test", "DontWreckMyHouse.DAL.Test\DontWreckMyHouse.DAL.Test.csproj", "{0B669D43-419E-47BD-B9AD-9162D7FC4E1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DontWreckMyHouse.BLL.Test", "DontWreckMyHouse.BLL.Test\DontWreckMyHouse.BLL.Test.csproj", "{26591C3E-2A1B-49FF-ABA9-6B0C4F8E1160}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DontWreckMyHouse.BLL.Test", "DontWreckMyHouse.BLL.Test\DontWreckMyHouse.BLL.Test.csproj", "{26591C3E-2A1B-49FF-ABA9-6B0C4F8E1160}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
