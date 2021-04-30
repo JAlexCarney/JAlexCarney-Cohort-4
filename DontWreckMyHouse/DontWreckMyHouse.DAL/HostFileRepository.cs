@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DontWreckMyHouse.Core.Models;
 using DontWreckMyHouse.Core.Repositories;
+using DontWreckMyHouse.Core.Loggers;
+using DontWreckMyHouse.Core.Exceptions;
 using System.IO;
 
 namespace DontWreckMyHouse.DAL
@@ -13,20 +15,23 @@ namespace DontWreckMyHouse.DAL
     {
         private readonly string fileName;
         private List<Host> hosts;
+        private readonly ILogger logger;
         
-        public HostFileRepository(string fileName) 
+        public HostFileRepository(string fileName, ILogger logger) 
         {
             this.fileName = fileName;
-            Load();
+            this.logger = logger;
         }
 
         public List<Host> ReadAll()
         {
+            Load();
             return hosts;
         }
 
         public Host ReadByEmail(string email)
         {
+            Load();
             return hosts.Where(h => h.Email == email).FirstOrDefault();
         }
 
@@ -45,8 +50,9 @@ namespace DontWreckMyHouse.DAL
             }
             catch (IOException ex)
             {
-                //TODO: Create Custom Exeption
-                throw new Exception("Failed to read from file.", ex);
+                string message = "Failed to read from host file.";
+                logger.Log(message);
+                throw new RepositoryException(message, ex);
             }
 
             for (int i = 1; i < lines.Length; i++) // skip the header
@@ -67,21 +73,29 @@ namespace DontWreckMyHouse.DAL
                 return null;
             }
 
-            // TODO: Add try catch here
-            var result = new Host
+            try
             {
-                Id = fields[0],
-                LastName = fields[1],
-                Email = fields[2],
-                Phone = fields[3],
-                Address = fields[4],
-                City = fields[5],
-                State = fields[6],
-                PostalCode = int.Parse(fields[7]),
-                StandardRate = decimal.Parse(fields[8]),
-                WeekendRate = decimal.Parse(fields[9])
-            };
-            return result;
+                var result = new Host
+                {
+                    Id = fields[0],
+                    LastName = fields[1],
+                    Email = fields[2],
+                    Phone = fields[3],
+                    Address = fields[4],
+                    City = fields[5],
+                    State = fields[6],
+                    PostalCode = int.Parse(fields[7]),
+                    StandardRate = decimal.Parse(fields[8]),
+                    WeekendRate = decimal.Parse(fields[9])
+                };
+                return result;
+            }
+            catch (Exception ex) 
+            {
+                string message = "Failed to deserialize host data";
+                logger.Log(message);
+                throw new RepositoryException(message, ex);
+            }
         }
     }
 }

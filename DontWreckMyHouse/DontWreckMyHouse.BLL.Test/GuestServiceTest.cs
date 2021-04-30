@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using DontWreckMyHouse.BLL.Test.TestDoubles;
 using DontWreckMyHouse.Core.Models;
+using DontWreckMyHouse.Core.Loggers;
 
 namespace DontWreckMyHouse.BLL.Test
 {
@@ -11,7 +12,7 @@ namespace DontWreckMyHouse.BLL.Test
         [SetUp]
         public void SetUp()
         {
-            service = new GuestService(new GuestRepositoryDouble());
+            service = new GuestService(new GuestRepositoryDouble(), new NullLogger());
         }
 
         [Test]

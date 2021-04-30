@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using DontWreckMyHouse.BLL.Test.TestDoubles;
+using DontWreckMyHouse.Core.Loggers;
 using DontWreckMyHouse.Core.Models;
 
 namespace DontWreckMyHouse.BLL.Test
@@ -17,7 +18,8 @@ namespace DontWreckMyHouse.BLL.Test
             (
                 new HostRepositoryDouble(),
                 new GuestRepositoryDouble(),
-                new ReservationRepositoryDouble()
+                new ReservationRepositoryDouble(),
+                new NullLogger()
             );
         }
 
@@ -41,8 +43,10 @@ namespace DontWreckMyHouse.BLL.Test
         public void ShouldFailToReadByHostWithNoData() 
         {
             // Arrange
-            Host emptyHost = new Host();
-            emptyHost.Id = "test";
+            var emptyHost = new Host
+            {
+                Id = "test"
+            };
 
             // Act
             var actual = service.ReadByHost(emptyHost);
@@ -63,7 +67,7 @@ namespace DontWreckMyHouse.BLL.Test
         public void ShouldCreateValidReservation(string startDate, string endDate) 
         {
             // Arrange
-            Reservation expected = new Reservation()
+            var expected = new Reservation()
             {
                 Id = 2,
                 StartDate = DateTime.Parse(startDate),
@@ -85,7 +89,7 @@ namespace DontWreckMyHouse.BLL.Test
         public void ShouldReadAfterCreate() 
         {
             // Arrange
-            Reservation expected = new Reservation()
+            var expected = new Reservation()
             {
                 Id = 2,
                 StartDate = new DateTime(2000, 1, 1),
@@ -122,7 +126,7 @@ namespace DontWreckMyHouse.BLL.Test
         public void ShouldFailToCreateReservationWithoutHost()
         {
             // Arrange
-            Reservation expected = new Reservation()
+            var expected = new Reservation()
             {
                 Id = 2,
                 StartDate = new DateTime(2022, 2, 13),
@@ -145,7 +149,7 @@ namespace DontWreckMyHouse.BLL.Test
         public void ShouldFailToCreateReservationWithUnknownHost()
         {
             // Arrange
-            Reservation expected = new Reservation()
+            var expected = new Reservation()
             {
                 Id = 2,
                 StartDate = new DateTime(2022, 2, 13),
@@ -168,7 +172,7 @@ namespace DontWreckMyHouse.BLL.Test
         public void ShouldFailToCreateReservationWithMissingData()
         {
             // Arrange
-            Reservation expected = new Reservation();
+            var expected = new Reservation();
 
             // Act
             var actual = service.Create(HostRepositoryDouble.HOST, expected);
@@ -184,7 +188,7 @@ namespace DontWreckMyHouse.BLL.Test
         public void ShouldFailToCreateReservationWithInvalidDates()
         {
             // Arrange
-            Reservation expected = new Reservation()
+            var expected = new Reservation()
             {
                 Id = 2,
                 StartDate = new DateTime(2025, 2, 13),
@@ -214,7 +218,7 @@ namespace DontWreckMyHouse.BLL.Test
         public void ShouldFailToCreateReservationWithOverlapingDates(string startDate, string endDate)
         {
             // Arrange
-            Reservation expected = new Reservation()
+            var expected = new Reservation()
             {
                 Id = 2,
                 StartDate = DateTime.Parse(startDate),
@@ -237,7 +241,7 @@ namespace DontWreckMyHouse.BLL.Test
         public void ShouldFailToCreateReservationWithUnknownGuest() 
         {
             // Arrange
-            Reservation expected = new Reservation()
+            var expected = new Reservation()
             {
                 Id = 5,
                 StartDate = new DateTime(2000, 1, 1),
@@ -272,7 +276,7 @@ namespace DontWreckMyHouse.BLL.Test
         public void ShouldFailToDeleteFromUnknownHost() 
         {
             // Arrange
-            Host emptyHost = new Host
+            var emptyHost = new Host
             {
                 Id = "test"
             };
@@ -291,7 +295,7 @@ namespace DontWreckMyHouse.BLL.Test
         public void ShouldFailToDeleteUnknownReservation()
         {
             // Arrange
-            Reservation unkownReservation = new Reservation
+            var unkownReservation = new Reservation
             {
                 Id = 3,
                 StartDate = new DateTime(2131, 1, 1),
@@ -314,7 +318,7 @@ namespace DontWreckMyHouse.BLL.Test
         public void ShouldFailToDeleteReservationInThePast()
         {
             // Arrange
-            Reservation reservation = new Reservation
+            var reservation = new Reservation
             {
                 Id = 3,
                 StartDate = new DateTime(2, 1, 1),
@@ -350,7 +354,7 @@ namespace DontWreckMyHouse.BLL.Test
         [Test]
         public void ShouldUpdateReservation() 
         {
-            Reservation expected = new Reservation()
+            var expected = new Reservation()
             {
                 Id = 1,
                 StartDate = new DateTime(2030, 1, 1),
@@ -373,7 +377,7 @@ namespace DontWreckMyHouse.BLL.Test
         [Test]
         public void ShouldFailToUpdateIntoInvalidEntry() 
         {
-            Reservation expected = new Reservation()
+            var expected = new Reservation()
             {
                 Id = 1,
                 StartDate = new DateTime(2032, 1, 1),
@@ -396,7 +400,7 @@ namespace DontWreckMyHouse.BLL.Test
         [Test]
         public void ShouldFailToUpdateIntoOverlappingDates()
         {
-            Reservation valid = new Reservation()
+            var valid = new Reservation()
             {
                 Id = 1,
                 StartDate = new DateTime(2032, 1, 1),
@@ -404,7 +408,7 @@ namespace DontWreckMyHouse.BLL.Test
                 GuestId = 1,
                 Total = 1022.50M
             };
-            Reservation expected = new Reservation()
+            var expected = new Reservation()
             {
                 Id = 1,
                 StartDate = new DateTime(2032, 6, 6),

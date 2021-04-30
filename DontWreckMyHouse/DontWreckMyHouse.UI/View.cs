@@ -8,7 +8,7 @@ namespace DontWreckMyHouse.UI
 {
     class View
     {
-        private ConsoleIO io;
+        private readonly ConsoleIO io;
 
         public View(ConsoleIO io) 
         {
@@ -17,7 +17,7 @@ namespace DontWreckMyHouse.UI
 
         public MainMenuOption SelectMainMenuOption()
         {
-            DisplayHeader("Main Menu");
+            DisplayHeader("Main Menu", false);
             int min = int.MaxValue;
             int max = int.MinValue;
             MainMenuOption[] options = Enum.GetValues<MainMenuOption>();
@@ -66,6 +66,12 @@ namespace DontWreckMyHouse.UI
                     io.PrintLineRed(message);
                 }
             }
+        }
+
+        public void DisplayException(Exception ex)
+        {
+            DisplayHeader("Critical Error");
+            io.PrintLineRed(ex.Message);
         }
 
         public void DisplayStatusShort(bool success, string message)
@@ -130,7 +136,7 @@ namespace DontWreckMyHouse.UI
             var sortedFutureData = data
                 .Where(r => r.StartDate.Subtract(DateTime.Now).Ticks >= 0)
                 .OrderBy(r => r.StartDate);
-            if (sortedFutureData.Count() == 0)
+            if (!sortedFutureData.Any())
             {
                 io.PrintLineDarkYellow("--- Empty ---");
                 return;
@@ -220,7 +226,7 @@ namespace DontWreckMyHouse.UI
 
         public Reservation MakeReservation(Guest guest) 
         {
-            Reservation reservation = new Reservation()
+            var reservation = new Reservation()
             {
                 Id = -1,
                 StartDate = io.ReadFutureDate("Start (MM/DD/YYYY): "),

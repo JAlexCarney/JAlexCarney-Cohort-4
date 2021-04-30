@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using DontWreckMyHouse.Core.Repositories;
+using DontWreckMyHouse.Core.Loggers;
 using DontWreckMyHouse.Core.Models;
+using DontWreckMyHouse.Core.Exceptions;
 using System.IO;
 
 namespace DontWreckMyHouse.DAL.Test
@@ -21,7 +23,7 @@ namespace DontWreckMyHouse.DAL.Test
         public void SetUp() 
         {
             File.Copy(SEED_FILE_PATH, TEST_FILE_PATH, true);
-            repo = new ReservationFileRepository(DIRECTORY_NAME);
+            repo = new ReservationFileRepository(DIRECTORY_NAME, new NullLogger());
         }
 
         [Test]
@@ -43,8 +45,10 @@ namespace DontWreckMyHouse.DAL.Test
         public void ShouldFailToReadByInvalidHost()
         {
             // Arrange
-            Host emptyHost = new Host();
-            emptyHost.Id = "Test";
+            var emptyHost = new Host()
+            {
+                Id = "Test"
+            };
 
             // Act
             var actual = repo.ReadByHost(emptyHost);
@@ -94,7 +98,7 @@ namespace DontWreckMyHouse.DAL.Test
 
             // Act
             repo.Create(key, expected);
-            repo = new ReservationFileRepository(DIRECTORY_NAME);
+            repo = new ReservationFileRepository(DIRECTORY_NAME, new NullLogger());
             List<Reservation> actual = repo.ReadByHost(key);
 
             // Assert
@@ -125,8 +129,8 @@ namespace DontWreckMyHouse.DAL.Test
         public void ShouldDeleteFileWithNoReservations() 
         {
             // Arrange
-            Reservation reservatoinOne = MakeReservation();
-            Reservation reservationTwo = new Reservation
+            var reservatoinOne = MakeReservation();
+            var reservationTwo = new Reservation
             {
                 Id = 2,
                 StartDate = new DateTime(2021, 11, 18),
@@ -147,7 +151,30 @@ namespace DontWreckMyHouse.DAL.Test
             Assert.IsFalse(File.Exists(filePath));
         }
 
-        private Reservation MakeReservation() 
+        [Test]
+        public void ShouldThrowExceptionWhenReadingInvalidData() 
+        {
+            // Arrange
+            var badRepo = new ReservationFileRepository("InvalidReservations", new NullLogger());
+
+            // Assert
+            Assert.Throws<RepositoryException>(() => { badRepo.ReadByHost(MakeHost()); });
+        }
+
+        [Test]
+        public void ShouldThrowExeptionWhenTryingToReadFileWithoutPermission()
+        {
+            // Arrange
+            var file = File.OpenWrite(@"TestReservations\8597c189-2352-49a2-ba9f-eb400d8dadbf.csv");
+
+            // Assert
+            Assert.Throws<RepositoryException>(() => { repo.ReadByHost(MakeHost()); });
+
+            // CleanUp
+            file.Close();
+        }
+
+        private static Reservation MakeReservation() 
         {
             var reservation = new Reservation
             {
@@ -160,7 +187,7 @@ namespace DontWreckMyHouse.DAL.Test
             return reservation;
         }
 
-        private Reservation MakeNewReservation()
+        private static Reservation MakeNewReservation()
         {
             var reservation = new Reservation
             {
@@ -173,7 +200,7 @@ namespace DontWreckMyHouse.DAL.Test
             return reservation;
         }
 
-        private Host MakeHost()
+        private static Host MakeHost()
         {
             var host = new Host
             {

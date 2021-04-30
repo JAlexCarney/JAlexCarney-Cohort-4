@@ -3,20 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using DontWreckMyHouse.Core.Models;
 using DontWreckMyHouse.Core.Repositories;
+using DontWreckMyHouse.Core.Loggers;
 
 namespace DontWreckMyHouse.BLL
 {
     public class ReservationService
     {
-        private IHostRepository hostRepository;
-        private IGuestRepository guestRepository;
-        private IReservationRepository reservationRepository;
+        private readonly IHostRepository hostRepository;
+        private readonly IGuestRepository guestRepository;
+        private readonly IReservationRepository reservationRepository;
+        private readonly ILogger logger;
 
-        public ReservationService(IHostRepository hostRepository, IGuestRepository guestRepository, IReservationRepository reservationRepository) 
+        public ReservationService(IHostRepository hostRepository,
+            IGuestRepository guestRepository,
+            IReservationRepository reservationRepository,
+            ILogger logger) 
         {
             this.hostRepository = hostRepository;
             this.guestRepository = guestRepository;
             this.reservationRepository = reservationRepository;
+            this.logger = logger;
         }
 
         private bool OverlapingDates(Host host, Reservation toAdd) 
@@ -36,12 +42,12 @@ namespace DontWreckMyHouse.BLL
             );
         }
 
-        private bool DateIsAfterOrEqual(DateTime one, DateTime two) 
+        private static bool DateIsAfterOrEqual(DateTime one, DateTime two) 
         {
             return one.Subtract(two).Ticks >= 0;
         }
 
-        private bool MissingRequiredFields(Reservation reservation) 
+        private static bool MissingRequiredFields(Reservation reservation) 
         {
             return (reservation.Total <= 0.0M 
                 || reservation.GuestId <= 0
@@ -53,40 +59,38 @@ namespace DontWreckMyHouse.BLL
         public Result<Reservation> Create(Host host, Reservation reservation) 
         {
             var result = new Result<Reservation>();
-
             if (reservation == null) 
             {
                 result.AddMessage("Must provide a reservation");
-                return result;
             }
-            if (host == null)
+            else if (host == null)
             {
                 result.AddMessage("Must provide a host.");
-                return result;
             }
-            if (!hostRepository.ReadAll().Contains(host))
+            else if (!hostRepository.ReadAll().Contains(host))
             {
                 result.AddMessage("Host is not in database.");
-                return result;
             }
-            if (MissingRequiredFields(reservation)) 
+            else if (MissingRequiredFields(reservation)) 
             {
                 result.AddMessage("Reservation is missing required fields.");
-                return result;
             }
-            if (guestRepository.ReadById(reservation.GuestId) == null) 
+            else if (guestRepository.ReadById(reservation.GuestId) == null) 
             {
                 result.AddMessage("Guest data could not be found.");
-                return result;
             }
-            if (DateIsAfterOrEqual(reservation.StartDate, reservation.EndDate)) 
+            else if (DateIsAfterOrEqual(reservation.StartDate, reservation.EndDate)) 
             {
                 result.AddMessage("End date must be after start date.");
-                return result;
             }
-            if (OverlapingDates(host, reservation)) 
+            else if (OverlapingDates(host, reservation)) 
             {
                 result.AddMessage("Date ranges can not overlap.");
+            }
+
+            if (!result.Success) 
+            {
+                logger.Log($"Failed to create reservation becuase => {result.Messages[0]}");
                 return result;
             }
 
@@ -116,18 +120,22 @@ namespace DontWreckMyHouse.BLL
             if (reservations == null) 
             {
                 result.AddMessage("That host has no reservations.");
-                return result;
             }
-            if (!reservations.Contains(reservation)) 
+            else if (!reservations.Contains(reservation)) 
             {
                 result.AddMessage("That reservation does not exist with that host.");
-                return result;
             }
-            if (reservation.StartDate.Subtract(DateTime.Now).Ticks < 0)
+            else if (reservation.StartDate.Subtract(DateTime.Now).Ticks < 0)
             {
                 result.AddMessage("Can not delete a past reservation.");
+            }
+
+            if (!result.Success) 
+            {
+                logger.Log($"Failed to delete reservation becuase => {result.Messages[0]}");
                 return result;
             }
+
             reservationRepository.Delete(host, reservation);
             result.Data = reservation;
             return result;

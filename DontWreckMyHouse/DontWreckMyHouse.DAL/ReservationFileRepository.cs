@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DontWreckMyHouse.Core.Models;
 using DontWreckMyHouse.Core.Repositories;
+using DontWreckMyHouse.Core.Loggers;
+using DontWreckMyHouse.Core.Exceptions;
 using System.IO;
 
 namespace DontWreckMyHouse.DAL
@@ -15,15 +17,17 @@ namespace DontWreckMyHouse.DAL
         private const string HEADER = "id,start_date,end_date,guest_id,total";
         private Dictionary<string, List<Reservation>> reservations;
         private Dictionary<string, int> nextIds;
+        private readonly ILogger logger;
 
-        public ReservationFileRepository(string directoryName) 
+        public ReservationFileRepository(string directoryName, ILogger logger) 
         {
             this.directoryName = directoryName;
-            Load();
+            this.logger = logger;
         }
 
         public Reservation Create(Host host, Reservation reservation)
         {
+            Load();
             if (reservations.ContainsKey(host.Id))
             {
                 reservation.Id = nextIds[host.Id];
@@ -41,8 +45,10 @@ namespace DontWreckMyHouse.DAL
                     nextIds[host.Id] = 1;
                 }
                 reservation.Id = nextIds[host.Id];
-                var newList = new List<Reservation>();
-                newList.Add(reservation);
+                var newList = new List<Reservation>
+                {
+                    reservation
+                };
                 reservations.Add(host.Id, newList);
             }
             Save(host.Id);
@@ -51,6 +57,7 @@ namespace DontWreckMyHouse.DAL
 
         public Reservation Delete(Host host, Reservation reservation)
         {
+            Load();
             reservations[host.Id].Remove(reservation);
             if (reservations[host.Id].Count == 0)
             {
@@ -67,6 +74,7 @@ namespace DontWreckMyHouse.DAL
 
         public List<Reservation> ReadByHost(Host host)
         {
+            Load();
             if (reservations.ContainsKey(host.Id))
             {
                 return reservations[host.Id];
@@ -80,7 +88,7 @@ namespace DontWreckMyHouse.DAL
             try
             {
                 File.WriteAllText(filePath, "");
-                using StreamWriter writer = new StreamWriter(filePath);
+                using var writer = new StreamWriter(filePath);
                 writer.WriteLine(HEADER);
 
                 if (reservations[key] == null)
@@ -95,7 +103,9 @@ namespace DontWreckMyHouse.DAL
             }
             catch (IOException ex)
             {
-                throw new Exception("could not write reservations", ex);
+                string message = "could not write reservations";
+                logger.Log(message);
+                throw new Exception(message, ex);
             }
         }
 
@@ -112,8 +122,9 @@ namespace DontWreckMyHouse.DAL
                 }
                 catch (IOException ex)
                 {
-                    //TODO: Create Custom Exeption
-                    throw new Exception("Failed to read from file.", ex);
+                    string message = "Failed to read from reservations file.";
+                    logger.Log(message);
+                    throw new RepositoryException(message, ex);
                 }
                 var reservationsInFile = new List<Reservation>();
                 for (int i = 1; i < lines.Length; i++) // skip the header
@@ -126,12 +137,12 @@ namespace DontWreckMyHouse.DAL
                     }
                 }
                 string hostId = fileName.Substring(directoryName.Length + 1, fileName.Length - directoryName.Length - 5);
-                nextIds.Add(hostId, reservationsInFile[reservationsInFile.Count-1].Id+1);
+                nextIds.Add(hostId, reservationsInFile[^1].Id+1);
                 reservations.Add(hostId, reservationsInFile);
             }
         }
 
-        private string Serialize(Reservation reservation) 
+        private static string Serialize(Reservation reservation) 
         {
             return string.Format("{0},{1},{2},{3},{4}",
                 reservation.Id,
@@ -148,16 +159,24 @@ namespace DontWreckMyHouse.DAL
                 return null;
             }
 
-            // TODO: Add try catch here
-            var result = new Reservation
+            try
             {
-                Id = int.Parse(fields[0]),
-                StartDate = DateTime.Parse(fields[1]),
-                EndDate = DateTime.Parse(fields[2]),
-                GuestId = int.Parse(fields[3]),
-                Total = decimal.Parse(fields[4])
-            };
-            return result;
+                var result = new Reservation
+                {
+                    Id = int.Parse(fields[0]),
+                    StartDate = DateTime.Parse(fields[1]),
+                    EndDate = DateTime.Parse(fields[2]),
+                    GuestId = int.Parse(fields[3]),
+                    Total = decimal.Parse(fields[4])
+                };
+                return result;
+            }
+            catch (Exception ex) 
+            {
+                string message = "Failed to deserialize Reservation data";
+                logger.Log(message);
+                throw new RepositoryException(message, ex);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DontWreckMyHouse.Core.Models;
+using DontWreckMyHouse.Core.Exceptions;
 using DontWreckMyHouse.BLL;
 using System;
 using System.Linq;
@@ -8,11 +9,18 @@ namespace DontWreckMyHouse.UI
 {
     class Controller
     {
-        private View view;
-        private ReservationService reservationService;
-        private HostService hostService;
-        private GuestService guestService;
+        private readonly View view;
+        private readonly ReservationService reservationService;
+        private readonly HostService hostService;
+        private readonly GuestService guestService;
 
+        /// <summary>
+        /// Creates a new controller object linked to the provided service objects and view
+        /// </summary>
+        /// <param name="reservationService">The service for interacting with the resrvation repo</param>
+        /// <param name="hostService">The service for interacting with the host repo</param>
+        /// <param name="guestService">The service for interacting with the guest repo</param>
+        /// <param name="view">The view for displaying and getting text to the user</param>
         public Controller(ReservationService reservationService, HostService hostService, GuestService guestService, View view) 
         {
             // Assign Service Objects
@@ -23,21 +31,37 @@ namespace DontWreckMyHouse.UI
             this.view = view;
         }
 
+        /// <summary>
+        /// Starts the Controller and pusts user into a menu loop
+        /// </summary>
         public void Run() 
         {
-            // Enter Menu Loop
-            MenuLoop();
-            // Say Goodbye
+            try
+            {
+                //Enter menu loop
+                MenuLoop();
+            }
+            catch (Exception ex)
+            {
+                if (ex is RepositoryException || ex is LoggerException)
+                {
+                    view.DisplayException(ex);
+                    return;
+                }
+                else 
+                {
+                    throw;
+                }
+            }
             view.DisplayHeader("Goodbye.");
         }
 
         private void MenuLoop() 
         {
-            // Display Menu
-            // Switch on Choice
             MainMenuOption option;
             do
             {
+                view.DisplayHeader("Dont Wreck My House");
                 option = view.SelectMainMenuOption();
                 switch (option)
                 {
@@ -68,6 +92,7 @@ namespace DontWreckMyHouse.UI
             // Get Reservations List
             List<Reservation> reservationList = GetReservationsList(host);
             // Display Reservations
+            view.DisplayHeader(MainMenuOption.ViewReservationsByHost.ToLabel());
             view.DisplayHeader(
                     $"{host.LastName}: {host.City}, {host.State}",
                     false);
@@ -88,6 +113,8 @@ namespace DontWreckMyHouse.UI
             if (guest == null) { return; }
             // Get Reservations List
             var reservationsList = GetReservationsList(host);
+            // Clear with new header
+            view.DisplayHeader($"Making Reservation For {guest.FirstName} {guest.LastName}");
             // Display Reservations
             view.DisplayHeader(
                 $"{host.LastName}: {host.City}, {host.State}",
@@ -130,7 +157,7 @@ namespace DontWreckMyHouse.UI
                 false);
             view.DisplayReservations(reservationsList, guestService);
             // Check if there is anything to update
-            if (reservationsList.Where(r => r.StartDate.Subtract(DateTime.Now).Ticks >= 0).Count() == 0)
+            if (!reservationsList.Any(r => r.StartDate.Subtract(DateTime.Now).Ticks >= 0))
             {
                 view.DisplayStatus(false, "There are no future reservations that can be updated.");
                 view.EnterToContinue();
@@ -177,7 +204,7 @@ namespace DontWreckMyHouse.UI
                 false);
             view.DisplayReservations(reservationsList, guestService);
             // Check if there is anything to delete
-            if (reservationsList.Where(r => r.StartDate.Subtract(DateTime.Now).Ticks >= 0).Count() == 0) 
+            if (!reservationsList.Any(r => r.StartDate.Subtract(DateTime.Now).Ticks >= 0)) 
             {
                 view.DisplayStatus(false, "There are no future reservations that can be canceled.");
                 view.EnterToContinue();
@@ -228,7 +255,7 @@ namespace DontWreckMyHouse.UI
                 return hostResult.Data;
             }
             var options = hosts.Where(h => h.Email.StartsWith(hostEmailPrefix)).Take(20).ToList();
-            if (options.Count() == 0) 
+            if (options.Count == 0) 
             {
                 view.DisplayStatus(false, $"No hosts found whose emails start with \"{hostEmailPrefix}\"");
                 // Prompt Continue
@@ -266,7 +293,7 @@ namespace DontWreckMyHouse.UI
                 return guestResult.Data;
             }
             var options = guests.Where(h => h.Email.StartsWith(guestEmailPrefix)).Take(20).ToList();
-            if (options.Count() == 0)
+            if (options.Count == 0)
             {
                 view.DisplayStatus(false, $"No guests found whose emails start with \"{guestEmailPrefix}\"");
                 // Prompt Continue
@@ -303,7 +330,7 @@ namespace DontWreckMyHouse.UI
             return reservationsResult.Data;
         }
 
-        private decimal CalculateTotal(Host host, Reservation reservation) 
+        private static decimal CalculateTotal(Host host, Reservation reservation) 
         {
             decimal total = 0M;
             for(DateTime date = reservation.StartDate; date.Subtract(reservation.EndDate).Ticks < 0; date = date.AddDays(1)) 

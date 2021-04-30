@@ -1,16 +1,19 @@
 ﻿using DontWreckMyHouse.Core.Repositories;
 using DontWreckMyHouse.Core.Models;
+using DontWreckMyHouse.Core.Loggers;
 using System.Collections.Generic;
 
 namespace DontWreckMyHouse.BLL
 {
     public class HostService
     {
-        private IHostRepository repo;
+        private readonly IHostRepository repo;
+        private readonly ILogger logger;
 
-        public HostService(IHostRepository repo) 
+        public HostService(IHostRepository repo, ILogger logger) 
         {
             this.repo = repo;
+            this.logger = logger;
         }
 
         public Result<List<Host>> ReadAll() 

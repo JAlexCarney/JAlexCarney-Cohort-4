@@ -5,33 +5,39 @@ using System.Text;
 using System.Threading.Tasks;
 using DontWreckMyHouse.Core.Models;
 using DontWreckMyHouse.Core.Repositories;
+using DontWreckMyHouse.Core.Loggers;
+using DontWreckMyHouse.Core.Exceptions;
 using System.IO;
 
 namespace DontWreckMyHouse.DAL
 {
     public class GuestFileRepository : IGuestRepository
     {
-        private string fileName;
+        private readonly string fileName;
         private List<Guest> guests;
+        private readonly ILogger logger;
 
-        public GuestFileRepository(string fileName)
+        public GuestFileRepository(string fileName, ILogger logger)
         {
             this.fileName = fileName;
-            Load();
+            this.logger = logger;
         }
 
         public List<Guest> ReadAll()
         {
+            Load();
             return guests;
         }
 
         public Guest ReadByEmail(string email)
         {
+            Load();
             return guests.Where(g => g.Email == email).FirstOrDefault();
         }
 
         public Guest ReadById(int id) 
         {
+            Load();
             return guests.Where(g => g.Id == id).FirstOrDefault();
         }
 
@@ -50,8 +56,9 @@ namespace DontWreckMyHouse.DAL
             }
             catch (IOException ex)
             {
-                //TODO: Create Custom Exeption
-                throw new Exception("Failed to read from file.", ex);
+                string message = "Failed to read from guest file";
+                logger.Log(message);
+                throw new RepositoryException(message, ex);
             }
 
             for (int i = 1; i < lines.Length; i++) // skip the header
@@ -72,17 +79,25 @@ namespace DontWreckMyHouse.DAL
                 return null;
             }
 
-            // TODO: Add try catch here
-            var result = new Guest
+            try
             {
-                Id = int.Parse(fields[0]),
-                FirstName = fields[1],
-                LastName = fields[2],
-                Email = fields[3],
-                Phone = fields[4],
-                State = fields[5]
-            };
-            return result;
+                var result = new Guest
+                {
+                    Id = int.Parse(fields[0]),
+                    FirstName = fields[1],
+                    LastName = fields[2],
+                    Email = fields[3],
+                    Phone = fields[4],
+                    State = fields[5]
+                };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to deserialize guest data";
+                logger.Log(message);
+                throw new RepositoryException(message, ex);
+            }
         }
     }
 }

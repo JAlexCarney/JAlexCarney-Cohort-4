@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using DontWreckMyHouse.DAL;
+﻿using NUnit.Framework;
 using DontWreckMyHouse.Core.Repositories;
+using DontWreckMyHouse.Core.Loggers;
 using DontWreckMyHouse.Core.Models;
+using DontWreckMyHouse.Core.Exceptions;
+using System.IO;
 
 namespace DontWreckMyHouse.DAL.Test
 {
@@ -17,7 +14,7 @@ namespace DontWreckMyHouse.DAL.Test
         [SetUp]
         public void SetUp() 
         {
-            repo = new HostFileRepository("TestHosts.csv");
+            repo = new HostFileRepository("TestHosts.csv", new NullLogger());
         }
 
         [Test]
@@ -57,7 +54,28 @@ namespace DontWreckMyHouse.DAL.Test
             Assert.IsNull(actual);
         }
 
-        private Host MakeHost() 
+        [Test]
+        public void ShouldThrowExeptionWhenReadingInvalidData()
+        {
+            var badRepo = new HostFileRepository("InvalidHosts.csv", new NullLogger());
+
+            Assert.Throws<RepositoryException>(() => { badRepo.ReadAll(); });
+        }
+
+        [Test]
+        public void ShouldThrowExeptionWhenTryingToReadFileWithoutPermission()
+        {
+            // Arrange
+            var file = File.OpenWrite("TestHosts.csv");
+
+            // Assert
+            Assert.Throws<RepositoryException>(() => { repo.ReadAll(); });
+
+            // CleanUp
+            file.Close();
+        }
+
+        private static Host MakeHost() 
         {
             var host = new Host
             {

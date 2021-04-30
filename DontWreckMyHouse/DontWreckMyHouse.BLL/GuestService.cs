@@ -4,16 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DontWreckMyHouse.Core.Repositories;
+using DontWreckMyHouse.Core.Loggers;
 using DontWreckMyHouse.Core.Models;
 
 namespace DontWreckMyHouse.BLL
 {
     public class GuestService
     {
-        private IGuestRepository repo;
+        private readonly IGuestRepository repo;
+        private readonly ILogger logger;
 
-        public GuestService(IGuestRepository repo)
+        public GuestService(IGuestRepository repo, ILogger logger)
         {
+            this.logger = logger;
             this.repo = repo;
         }
 
