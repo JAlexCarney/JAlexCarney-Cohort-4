@@ -356,22 +356,39 @@ namespace DontWreckMyHouse.BLL.Test
         {
             var expected = new Reservation()
             {
-                Id = 1,
+                Id = 2,
+                StartDate = new DateTime(2031, 1, 1),
+                EndDate = new DateTime(2032, 1, 1),
+                GuestId = 1,
+                Total = 1022.50M
+            };
+            var newReservation = new Reservation()
+            {
+                Id = 2,
                 StartDate = new DateTime(2030, 1, 1),
                 EndDate = new DateTime(2031, 1, 1),
                 GuestId = 1,
                 Total = 1022.50M
             };
+            var newReservationTwo = new Reservation()
+            {
+                Id = 3,
+                StartDate = new DateTime(2040, 1, 1),
+                EndDate = new DateTime(2041, 1, 1),
+                GuestId = 1,
+                Total = 1022.50M
+            };
 
-            var actual = service.Update(HostRepositoryDouble.HOST, ReservationRepositoryDouble.RESERVATION, expected);
+            service.Create(HostRepositoryDouble.HOST, newReservation);
+            service.Create(HostRepositoryDouble.HOST, newReservationTwo);
+            var actual = service.Update(HostRepositoryDouble.HOST, newReservation, expected);
             var actualStored = service.ReadByHost(HostRepositoryDouble.HOST);
 
             // Assert
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual.Success);
-            Assert.AreEqual(1, actualStored.Data.Count);
+            Assert.AreEqual(3, actualStored.Data.Count);
             Assert.AreEqual(expected, actual.Data);
-            Assert.AreEqual(expected, actualStored.Data[0]);
         }
 
         [Test]

@@ -5,7 +5,7 @@ using DontWreckMyHouse.DAL;
 
 namespace DontWreckMyHouse.UI
 {
-    class NinjectContainer
+    public class NinjectContainer
     {
         public static StandardKernel Kernel { get; private set; }
 
