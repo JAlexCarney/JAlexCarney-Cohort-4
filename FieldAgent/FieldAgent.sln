@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FieldAgent.Core", "FieldAgent.Core\FieldAgent.Core.csproj", "{EDAF7FEE-5C6D-4F63-9D3B-2D2063C4695D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLScripts", "SQLScripts", "{10E81E46-AF76-4811-833E-3A1580CFAB18}"
+	ProjectSection(SolutionItems) = preProject
+		FieldAgentSchema.sql = FieldAgentSchema.sql
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EDAF7FEE-5C6D-4F63-9D3B-2D2063C4695D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDAF7FEE-5C6D-4F63-9D3B-2D2063C4695D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDAF7FEE-5C6D-4F63-9D3B-2D2063C4695D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDAF7FEE-5C6D-4F63-9D3B-2D2063C4695D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F5863B59-3380-4218-B1D4-B783F202EE68}
+	EndGlobalSection
+EndGlobal
