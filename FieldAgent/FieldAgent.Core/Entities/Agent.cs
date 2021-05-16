@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FieldAgent.Core.Entities
 {
@@ -17,7 +14,7 @@ namespace FieldAgent.Core.Entities
 
         // Navigation Properties
         public List<AgencyAgent> AgencyAgents { get; set; }
-        public List<MissionAgent> MissionAgents { get; set; }
+        public List<Mission> Missions { get; set; }
         public List<Alias> Aliases { get; set; }
     }
 }

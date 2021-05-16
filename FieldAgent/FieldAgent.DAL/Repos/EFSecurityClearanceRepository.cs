@@ -10,16 +10,36 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FieldAgent.DAL.Repos
 {
-    class EFSecurityClearanceRepository : ISecurityClearanceRepository
+    public class EFSecurityClearanceRepository : ISecurityClearanceRepository
     {
+        private FieldAgentDbContext context;
+
+        public EFSecurityClearanceRepository(FieldAgentDbContext context) 
+        {
+            this.context = context;
+        }
+
         public Response<SecurityClearance> Get(int securityClearanceId)
         {
-            throw new NotImplementedException();
+            SecurityClearance found = context.SecurityClearance.Find(securityClearanceId);
+            var response = new Response<SecurityClearance>();
+            if (found == null)
+            {
+                response.Message = "Failed to find SecurityClearance with given Id.";
+                return response;
+            }
+            response.Success = true;
+            response.Data = found;
+            return response;
         }
 
         public Response<List<SecurityClearance>> GetAll()
         {
-            throw new NotImplementedException();
+            List<SecurityClearance> found = context.SecurityClearance.ToList();
+            var response = new Response<List<SecurityClearance>>();
+            response.Success = true;
+            response.Data = found;
+            return response;
         }
     }
 }

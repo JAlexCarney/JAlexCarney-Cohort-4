@@ -3,7 +3,7 @@ using FieldAgent.Core.Entities;
 
 namespace FieldAgent.Core.Interfaces.DAL
 {
-    interface ILocationRepository
+    public interface ILocationRepository
     {
         Response<Location> Insert(Location location);
         Response Update(Location location);

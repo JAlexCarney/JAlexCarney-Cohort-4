@@ -7,14 +7,29 @@ using FieldAgent.Core;
 using FieldAgent.Core.DTOs;
 using FieldAgent.Core.Entities;
 using FieldAgent.Core.Interfaces.DAL;
+using System.Data.SqlClient;
 
 namespace FieldAgent.DAL.Repos
 {
-    class ADOReportsRepository : IReportsRepository
+    public class ADOReportsRepository : IReportsRepository
     {
+        private string _sqlConnectionString;
+
+        public ADOReportsRepository(string sqlConnectionString) 
+        {
+            _sqlConnectionString = sqlConnectionString;
+        }
+
         public Response<List<ClearanceAuditListItem>> AuditClearance(int securityClearanceId, int agencyId)
         {
-            throw new NotImplementedException();
+            List<ClearanceAuditListItem> data;
+            var response = new Response<List<ClearanceAuditListItem>>();
+            using (SqlConnection connection = new SqlConnection(_sqlConnectionString)) 
+            {
+                string sql = @"";
+            }
+            response.Success = true;
+            return response;
         }
 
         public Response<List<PensionListItem>> GetPensionList(int agencyId)

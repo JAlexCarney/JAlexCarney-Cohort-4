@@ -3,7 +3,7 @@ using FieldAgent.Core.Entities;
 
 namespace FieldAgent.Core.Interfaces.DAL
 {
-    interface IAliasRepository
+    public interface IAliasRepository
     {
         Response<Alias> Insert(Alias alias);
         Response Update(Alias alias);

@@ -10,31 +10,82 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FieldAgent.DAL.Repos
 {
-    class EFLocationRepository : ILocationRepository
+    public class EFLocationRepository : ILocationRepository
     {
+        private FieldAgentDbContext context;
+
+        public EFLocationRepository(FieldAgentDbContext context) 
+        {
+            this.context = context;
+        }
+
         public Response Delete(int locationId)
         {
-            throw new NotImplementedException();
+            var toRemove = context.Location.Find(locationId);
+            var response = new Response();
+            if (toRemove == null)
+            {
+                response.Message = "Failed to find Location with given Id.";
+                return response;
+            }
+            context.Location.Remove(toRemove);
+            context.SaveChanges();
+            response.Success = true;
+            return response;
         }
 
         public Response<Location> Get(int locationId)
         {
-            throw new NotImplementedException();
+            Location found = context.Location.Find(locationId);
+            var response = new Response<Location>();
+            if (found == null)
+            {
+                response.Message = "Failed to find Location with given Id.";
+                return response;
+            }
+            response.Success = true;
+            response.Data = found;
+            return response;
         }
 
         public Response<List<Location>> GetByAgency(int agencyId)
         {
-            throw new NotImplementedException();
+            List<Location> aliases = context.Location.Where(a => a.AgencyId == agencyId).ToList();
+            var response = new Response<List<Location>>();
+            response.Success = true;
+            response.Data = aliases;
+            return response;
         }
 
         public Response<Location> Insert(Location location)
         {
-            throw new NotImplementedException();
+            Location inserted = context.Location.Add(location).Entity;
+            var response = new Response<Location>();
+            response.Data = inserted;
+            response.Success = true;
+            context.SaveChanges();
+            return response;
         }
 
         public Response Update(Location location)
         {
-            throw new NotImplementedException();
+            Location updating = context.Location.Find(location.LocationId);
+            var response = new Response();
+            if (updating == null)
+            {
+                response.Message = "Failed to find Location with given Id.";
+                return response;
+            }
+            updating.AgencyId = location.AgencyId;
+            updating.LocationName = location.LocationName;
+            updating.Street1 = location.Street1;
+            updating.Street2 = location.Street2;
+            updating.City = location.City;
+            updating.PostalCode = location.PostalCode;
+            updating.CountryCode = location.CountryCode;
+            context.SaveChanges();
+            response.Success = true;
+            return response;
         }
     }
 }

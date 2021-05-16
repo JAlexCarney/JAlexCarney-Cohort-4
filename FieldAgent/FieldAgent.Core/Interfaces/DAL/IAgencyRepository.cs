@@ -3,7 +3,7 @@ using FieldAgent.Core.Entities;
 
 namespace FieldAgent.Core.Interfaces.DAL
 {
-    interface IAgencyRepository
+    public interface IAgencyRepository
     {
         Response<Agency> Insert(Agency agency);
         Response Update(Agency agency);

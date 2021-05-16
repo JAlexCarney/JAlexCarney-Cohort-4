@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FieldAgent.Core.DTOs
 {
-    class ClearanceAuditListItem
+    public class ClearanceAuditListItem
     {
         public Guid BadgeId { get; set; }
         public string NameLastFirst { get; set; }

@@ -19,6 +19,6 @@ namespace FieldAgent.Core.Entities
         public string Notes { get; set; }
 
         // Navigation Properties
-        public List<MissionAgent> MissionAgents { get; set; }
+        public List<Agent> Agents { get; set; }
     }
 }

@@ -10,31 +10,77 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FieldAgent.DAL.Repos
 {
-    class EFAgencyRepository : IAgencyRepository
+    public class EFAgencyRepository : IAgencyRepository
     {
+        private FieldAgentDbContext context;
+
+        public EFAgencyRepository(FieldAgentDbContext context) 
+        {
+            this.context = context;
+        }
+
         public Response Delete(int agencyId)
         {
-            throw new NotImplementedException();
+            var toRemove = context.Agency.Find(agencyId);
+            var response = new Response();
+            if (toRemove == null)
+            {
+                response.Message = "Failed to find Agency with given Id.";
+                return response;
+            }
+            context.Agency.Remove(toRemove);
+            context.SaveChanges();
+            response.Success = true;
+            return response;
         }
 
         public Response<Agency> Get(int agencyId)
         {
-            throw new NotImplementedException();
+            Agency found = context.Agency.Find(agencyId);
+            var response = new Response<Agency>();
+            if (found == null)
+            {
+                response.Message = "Failed to find Agency with given Id.";
+                return response;
+            }
+            response.Success = true;
+            response.Data = found;
+            return response;
         }
 
         public Response<List<Agency>> GetAll()
         {
-            throw new NotImplementedException();
+            List<Agency> found = context.Agency.ToList();
+            var response = new Response<List<Agency>>();
+            response.Success = true;
+            response.Data = found;
+            return response;
         }
 
         public Response<Agency> Insert(Agency agency)
         {
-            throw new NotImplementedException();
+            Agency inserted = context.Agency.Add(agency).Entity;
+            var response = new Response<Agency>();
+            response.Data = inserted;
+            response.Success = true;
+            context.SaveChanges();
+            return response;
         }
 
         public Response Update(Agency agency)
         {
-            throw new NotImplementedException();
+            Agency updating = context.Agency.Find(agency.AgencyId);
+            var response = new Response();
+            if (updating == null)
+            {
+                response.Message = "Failed to find Agency with given Id.";
+                return response;
+            }
+            updating.ShortName = agency.ShortName;
+            updating.LongName = agency.LongName;
+            context.SaveChanges();
+            response.Success = true;
+            return response;
         }
     }
 }
