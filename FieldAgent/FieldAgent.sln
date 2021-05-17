@@ -7,12 +7,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FieldAgent.Core", "FieldAge
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLScripts", "SQLScripts", "{10E81E46-AF76-4811-833E-3A1580CFAB18}"
 	ProjectSection(SolutionItems) = preProject
+		ClearanceAudit.sql = ClearanceAudit.sql
 		FieldAgentSchema.sql = FieldAgentSchema.sql
+		Pension.sql = Pension.sql
+		SeedData.sql = SeedData.sql
+		TopAgent.sql = TopAgent.sql
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FieldAgent.DAL", "FieldAgent.DAL\FieldAgent.DAL.csproj", "{7A992279-94AE-44D0-B494-45EAE79FB08C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FieldAgent.DAL", "FieldAgent.DAL\FieldAgent.DAL.csproj", "{7A992279-94AE-44D0-B494-45EAE79FB08C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FieldAgent.DAL.Tests", "FieldAgent.DAL.Tests\FieldAgent.DAL.Tests.csproj", "{0525C335-8E4E-4A60-BB9C-3DAC27137418}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FieldAgent.DAL.Tests", "FieldAgent.DAL.Tests\FieldAgent.DAL.Tests.csproj", "{0525C335-8E4E-4A60-BB9C-3DAC27137418}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

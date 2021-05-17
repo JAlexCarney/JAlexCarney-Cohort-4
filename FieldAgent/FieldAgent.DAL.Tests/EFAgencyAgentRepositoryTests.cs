@@ -1,12 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FieldAgent.DAL.Repos;
 using FieldAgent.Core.Entities;
-using FieldAgent.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldAgent.DAL.Tests
