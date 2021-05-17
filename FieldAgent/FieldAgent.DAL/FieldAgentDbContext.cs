@@ -34,6 +34,15 @@ namespace FieldAgent.DAL
                 .HasKey(k => new { k.AgencyId, k.AgentId});
             modelBuilder.Entity<MissionAgent>()
                 .HasKey(k => new { k.MissionId, k.AgentId });
+            modelBuilder.Entity<Alias>()
+                .HasOne(a => a.Agent)
+                .WithMany(a => a.Aliases);
+            modelBuilder.Entity<AgencyAgent>()
+                .HasOne(aa => aa.Agent)
+                .WithMany(a => a.AgencyAgents);
+            modelBuilder.Entity<AgencyAgent>()
+                .HasOne(aa => aa.Agency)
+                .WithMany(a => a.AgencyAgents);
             modelBuilder.Entity<SecurityClearance>()
                 .HasData(
                     new SecurityClearance

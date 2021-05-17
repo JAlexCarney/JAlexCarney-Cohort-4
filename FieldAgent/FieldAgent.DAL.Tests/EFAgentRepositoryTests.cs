@@ -14,6 +14,7 @@ namespace FieldAgent.DAL.Tests
     class EFAgentRepositoryTests
     {
         private EFAgentRepository repo;
+        private EFAliasRepository aliasRepo;
 
         [SetUp]
         public void Setup() 
@@ -25,6 +26,7 @@ namespace FieldAgent.DAL.Tests
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
             repo = new EFAgentRepository(context);
+            aliasRepo = new EFAliasRepository(context);
         }
 
         [Test]
@@ -138,6 +140,25 @@ namespace FieldAgent.DAL.Tests
             Assert.AreEqual("Failed to find Agent with given Id.", response2.Message);
         }
 
+        [Test]
+        public void ShouldCascadeDelete() 
+        {
+            var data = MakeAgent();
+            var data2 = MakeAlias();
+
+            var response1 = repo.Insert(data);
+            var response2 = aliasRepo.Insert(data2);
+            var response3 = repo.Delete(response1.Data.AgentId);
+            var response4 = repo.Get(response1.Data.AgentId);
+            var response5 = aliasRepo.Get(response2.Data.AliasId);
+
+            Assert.IsTrue(response1.Success);
+            Assert.IsTrue(response2.Success);
+            Assert.IsTrue(response3.Success);
+            Assert.IsFalse(response4.Success);
+            Assert.IsFalse(response5.Success);
+        }
+
         // Helper Functions
         private Agent MakeAgent() 
         {
@@ -147,6 +168,17 @@ namespace FieldAgent.DAL.Tests
                 LastName = "Carney",
                 DateOfBirth = new DateTime(1997, 12, 16),
                 Height = 6.5M
+            };
+        }
+
+        private Alias MakeAlias()
+        {
+            return new Alias
+            {
+                AgentId = 1,
+                AliasName = "Zander",
+                InterpolId = new Guid("5C60F693-BEF5-E011-A485-80EE7300C695"),
+                Persona = "Cool"
             };
         }
     }
