@@ -32,20 +32,30 @@ namespace FieldAgent.DAL.Repos
                 command.Parameters.AddWithValue("@AgencyId", agencyId);
                 command.Parameters.AddWithValue("@SecurityClearanceId", securityClearanceId);
 
-                connection.Open();
-                using (var dataReader = command.ExecuteReader())
+                try
                 {
-                    while (dataReader.Read())
+                    connection.Open();
+                    using (var dataReader = command.ExecuteReader())
                     {
-                        data.Add(new ClearanceAuditListItem
+                        while (dataReader.Read())
                         {
-                            BadgeId = Guid.Parse(dataReader["BadgeId"].ToString()),
-                            NameLastFirst = dataReader["NameLastFirst"].ToString(),
-                            DateOfBirth = DateTime.Parse(dataReader["DateOfBirth"].ToString()),
-                            ActivationDate = DateTime.Parse(dataReader["ActivationDate"].ToString()),
-                            DeactivationDate = dataReader["DeactivationDate"] is DBNull ? null : DateTime.Parse(dataReader["DeactivationDate"].ToString())
-                        });
+                            data.Add(new ClearanceAuditListItem
+                            {
+                                BadgeId = Guid.Parse(dataReader["BadgeId"].ToString()),
+                                NameLastFirst = dataReader["NameLastFirst"].ToString(),
+                                DateOfBirth = DateTime.Parse(dataReader["DateOfBirth"].ToString()),
+                                ActivationDate = DateTime.Parse(dataReader["ActivationDate"].ToString()),
+                                DeactivationDate = dataReader["DeactivationDate"] is DBNull ? null : DateTime.Parse(dataReader["DeactivationDate"].ToString())
+                            });
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    response.Message = ex.Message;
+                    response.Data = null;
+                    response.Success = false;
+                    return response;
                 }
             }
             response.Data = data;
@@ -63,20 +73,30 @@ namespace FieldAgent.DAL.Repos
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.AddWithValue("@AgencyId", agencyId);
 
-                connection.Open();
-                using (var dataReader = command.ExecuteReader())
+                try
                 {
-                    while (dataReader.Read())
+                    connection.Open();
+                    using (var dataReader = command.ExecuteReader())
                     {
-                        data.Add(new PensionListItem
+                        while (dataReader.Read())
                         {
-                            AgencyName = dataReader["AgencyName"].ToString(),
-                            BadgeId = Guid.Parse(dataReader["BadgeId"].ToString()),
-                            NameLastFirst = dataReader["NameLastFirst"].ToString(),
-                            DateOfBirth = DateTime.Parse(dataReader["DateOfBirth"].ToString()),
-                            DeactivationDate = DateTime.Parse(dataReader["DeactivationDate"].ToString())
-                        });
+                            data.Add(new PensionListItem
+                            {
+                                AgencyName = dataReader["AgencyName"].ToString(),
+                                BadgeId = Guid.Parse(dataReader["BadgeId"].ToString()),
+                                NameLastFirst = dataReader["NameLastFirst"].ToString(),
+                                DateOfBirth = DateTime.Parse(dataReader["DateOfBirth"].ToString()),
+                                DeactivationDate = DateTime.Parse(dataReader["DeactivationDate"].ToString())
+                            });
+                        }
                     }
+                }
+                catch (Exception ex) 
+                {
+                    response.Message = ex.Message;
+                    response.Data = null;
+                    response.Success = false;
+                    return response;
                 }
             }
             response.Data = data;
@@ -92,20 +112,29 @@ namespace FieldAgent.DAL.Repos
             {
                 var command = new SqlCommand(@"TopAgents", connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
-                connection.Open();
-                using (var dataReader = command.ExecuteReader())
-                {
-                    int agents = 0;
-                    while (dataReader.Read() && agents < 3)
+                try {
+                    connection.Open();
+                    using (var dataReader = command.ExecuteReader())
                     {
-                        data.Add(new TopAgentListItem
+                        int agents = 0;
+                        while (dataReader.Read() && agents < 3)
                         {
-                            NameLastFirst = dataReader["NameLastFirst"].ToString(),
-                            DateOfBirth = DateTime.Parse(dataReader["DateOfBirth"].ToString()),
-                            CompletedMissionCount = int.Parse(dataReader["CompletedMissionCount"].ToString())
-                        });
-                        agents++;
+                            data.Add(new TopAgentListItem
+                            {
+                                NameLastFirst = dataReader["NameLastFirst"].ToString(),
+                                DateOfBirth = DateTime.Parse(dataReader["DateOfBirth"].ToString()),
+                                CompletedMissionCount = int.Parse(dataReader["CompletedMissionCount"].ToString())
+                            });
+                            agents++;
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    response.Message = ex.Message;
+                    response.Data = null;
+                    response.Success = false;
+                    return response;
                 }
             }
             response.Data = data;

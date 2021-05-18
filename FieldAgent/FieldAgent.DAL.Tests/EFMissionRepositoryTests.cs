@@ -1,12 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FieldAgent.DAL.Repos;
 using FieldAgent.Core.Entities;
-using FieldAgent.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldAgent.DAL.Tests
@@ -143,7 +138,7 @@ namespace FieldAgent.DAL.Tests
         }
 
         // Helper Functions
-        private Mission MakeMission()
+        private static Mission MakeMission()
         {
             return new Mission
             {
@@ -157,7 +152,7 @@ namespace FieldAgent.DAL.Tests
             };
         }
 
-        private Agent MakeAgent()
+        private static Agent MakeAgent()
         {
             return new Agent
             {

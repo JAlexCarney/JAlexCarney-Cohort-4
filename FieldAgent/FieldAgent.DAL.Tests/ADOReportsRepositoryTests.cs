@@ -1,15 +1,7 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FieldAgent.DAL.Repos;
-using FieldAgent.Core.Entities;
-using FieldAgent.Core;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Reflection;
 
@@ -43,7 +35,7 @@ namespace FieldAgent.DAL.Tests
             // Assert
             Assert.IsTrue(response.Success);
             Assert.IsNull(response.Message);
-            Assert.AreEqual(3, response.Data.Count());
+            Assert.AreEqual(3, response.Data.Count);
         }
 
         [Test]
@@ -55,7 +47,7 @@ namespace FieldAgent.DAL.Tests
             // Assert
             Assert.IsTrue(response.Success);
             Assert.IsNull(response.Message);
-            Assert.AreEqual(2, response.Data.Count());
+            Assert.AreEqual(2, response.Data.Count);
         }
 
         [Test]
@@ -67,7 +59,7 @@ namespace FieldAgent.DAL.Tests
             // Assert
             Assert.IsTrue(response.Success);
             Assert.IsNull(response.Message);
-            Assert.AreEqual(1, response.Data.Count());
+            Assert.AreEqual(1, response.Data.Count);
         }
     }
 }

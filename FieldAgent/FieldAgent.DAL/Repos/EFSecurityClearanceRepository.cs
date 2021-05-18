@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FieldAgent.Core;
 using FieldAgent.Core.Entities;
 using FieldAgent.Core.Interfaces.DAL;
-using Microsoft.EntityFrameworkCore;
 
 namespace FieldAgent.DAL.Repos
 {
@@ -21,8 +18,17 @@ namespace FieldAgent.DAL.Repos
 
         public Response<SecurityClearance> Get(int securityClearanceId)
         {
-            SecurityClearance found = context.SecurityClearance.Find(securityClearanceId);
+            SecurityClearance found;
             var response = new Response<SecurityClearance>();
+            try 
+            {
+                found = context.SecurityClearance.Find(securityClearanceId);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             if (found == null)
             {
                 response.Message = "Failed to find SecurityClearance with given Id.";
@@ -35,8 +41,17 @@ namespace FieldAgent.DAL.Repos
 
         public Response<List<SecurityClearance>> GetAll()
         {
-            List<SecurityClearance> found = context.SecurityClearance.ToList();
+            List<SecurityClearance> found;
             var response = new Response<List<SecurityClearance>>();
+            try 
+            {
+                found = context.SecurityClearance.ToList();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             response.Success = true;
             response.Data = found;
             return response;

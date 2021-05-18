@@ -21,23 +21,42 @@ namespace FieldAgent.DAL.Repos
 
         public Response Delete(int aliasId)
         {
-            var toRemove = context.Alias.Find(aliasId);
+            Alias toRemove;
             var response = new Response();
-            if (toRemove == null)
+            try 
             {
-                response.Message = "Failed to find Agent with given Id.";
+                toRemove = context.Alias.Find(aliasId);
+                if (toRemove == null)
+                {
+                    response.Message = "Failed to find Agent with given Id.";
+                    return response;
+                }
+                context.Alias.Remove(toRemove);
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
                 return response;
             }
-            context.Alias.Remove(toRemove);
-            context.SaveChanges();
+
             response.Success = true;
             return response;
         }
 
         public Response<Alias> Get(int aliasId)
         {
-            Alias found = context.Alias.Find(aliasId);
             var response = new Response<Alias>();
+            Alias found;
+            try
+            {
+                found = context.Alias.Find(aliasId);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             if (found == null)
             {
                 response.Message = "Failed to find Alias with given Id.";
@@ -50,8 +69,17 @@ namespace FieldAgent.DAL.Repos
 
         public Response<List<Alias>> GetByAgent(int agentId)
         {
-            List<Alias> aliases = context.Alias.Where(a => a.AgentId == agentId).ToList();
+            List<Alias> aliases;
             var response = new Response<List<Alias>>();
+            try
+            {
+                aliases = context.Alias.Where(a => a.AgentId == agentId).ToList();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             response.Success = true;
             response.Data = aliases;
             return response;
@@ -59,28 +87,46 @@ namespace FieldAgent.DAL.Repos
 
         public Response<Alias> Insert(Alias alias)
         {
-            Alias inserted = context.Alias.Add(alias).Entity;
+            Alias inserted;
             var response = new Response<Alias>();
-            response.Data = inserted;
+            try 
+            {
+                inserted = context.Alias.Add(alias).Entity;
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             response.Success = true;
-            context.SaveChanges();
+            response.Data = inserted;
             return response;
         }
 
         public Response Update(Alias alias)
         {
-            Alias updating = context.Alias.Find(alias.AliasId);
+            Alias updating;
             var response = new Response();
-            if (updating == null)
+            try
             {
-                response.Message = "Failed to find Alias with given Id.";
+                updating = context.Alias.Find(alias.AliasId);
+                if (updating == null)
+                {
+                    response.Message = "Failed to find Alias with given Id.";
+                    return response;
+                }
+                updating.AliasName = alias.AliasName;
+                updating.AgentId = alias.AgentId;
+                updating.InterpolId = alias.InterpolId;
+                updating.Persona = alias.Persona;
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
                 return response;
             }
-            updating.AliasName = alias.AliasName;
-            updating.AgentId = alias.AgentId;
-            updating.InterpolId = alias.InterpolId;
-            updating.Persona = alias.Persona;
-            context.SaveChanges();
             response.Success = true;
             return response;
         }

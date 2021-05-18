@@ -21,27 +21,44 @@ namespace FieldAgent.DAL.Repos
 
         public Response Delete(int agencyid, int agentid)
         {
-            var toRemove = context.AgencyAgent
-                .Where(aa => aa.AgencyId == agencyid && aa.AgentId == agentid)
-                .SingleOrDefault();
             var response = new Response();
-            if (toRemove == null)
+            try
             {
-                response.Message = "Failed to find Agency with given Id.";
+                var toRemove = context.AgencyAgent
+                    .Where(aa => aa.AgencyId == agencyid && aa.AgentId == agentid)
+                    .SingleOrDefault();
+                if (toRemove == null)
+                {
+                    response.Message = "Failed to find Agency with given Id.";
+                    return response;
+                }
+                context.AgencyAgent.Remove(toRemove);
+                context.SaveChanges();
+            }
+            catch (Exception ex) 
+            {
+                response.Message = ex.Message;
                 return response;
             }
-            context.AgencyAgent.Remove(toRemove);
-            context.SaveChanges();
             response.Success = true;
             return response;
         }
 
         public Response<AgencyAgent> Get(int agencyid, int agentid)
         {
-            AgencyAgent found = context.AgencyAgent
-                .Where(aa => aa.AgencyId == agencyid && aa.AgentId == agentid)
-                .SingleOrDefault();
             var response = new Response<AgencyAgent>();
+            AgencyAgent found;
+            try
+            {
+                found = context.AgencyAgent
+                    .Where(aa => aa.AgencyId == agencyid && aa.AgentId == agentid)
+                    .SingleOrDefault();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             if (found == null)
             {
                 response.Message = "Failed to find AgencyAgent with given Id.";
@@ -54,8 +71,18 @@ namespace FieldAgent.DAL.Repos
 
         public Response<List<AgencyAgent>> GetByAgency(int agencyId)
         {
-            List<AgencyAgent> agencyAgents = context.AgencyAgent.Where(a => a.AgencyId == agencyId).ToList();
             var response = new Response<List<AgencyAgent>>();
+            List<AgencyAgent> agencyAgents;
+            try 
+            {
+                agencyAgents = context.AgencyAgent.Where(a => a.AgencyId == agencyId).ToList();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
+            
             response.Success = true;
             response.Data = agencyAgents;
             return response;
@@ -63,8 +90,17 @@ namespace FieldAgent.DAL.Repos
 
         public Response<List<AgencyAgent>> GetByAgent(int agentId)
         {
-            List<AgencyAgent> agencyAgents = context.AgencyAgent.Where(a => a.AgentId == agentId).ToList();
             var response = new Response<List<AgencyAgent>>();
+            List<AgencyAgent> agencyAgents;
+            try
+            {
+                agencyAgents = context.AgencyAgent.Where(a => a.AgentId == agentId).ToList();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             response.Success = true;
             response.Data = agencyAgents;
             return response;
@@ -72,31 +108,49 @@ namespace FieldAgent.DAL.Repos
 
         public Response<AgencyAgent> Insert(AgencyAgent agencyAgent)
         {
-            AgencyAgent inserted = context.AgencyAgent.Add(agencyAgent).Entity;
             var response = new Response<AgencyAgent>();
+            AgencyAgent inserted;
+            context.SaveChanges();
+            try 
+            {
+                inserted = context.AgencyAgent.Add(agencyAgent).Entity;
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             response.Data = inserted;
             response.Success = true;
-            context.SaveChanges();
             return response;
         }
 
         public Response Update(AgencyAgent agencyAgent)
         {
-            AgencyAgent updating = context.AgencyAgent
-                .Where(aa => aa.AgencyId == agencyAgent.AgencyId && aa.AgencyId == agencyAgent.AgentId)
-                .SingleOrDefault();
             var response = new Response();
-            if (updating == null)
+            try
             {
-                response.Message = "Failed to find AgencyAgent with given Id.";
+                AgencyAgent updating = context.AgencyAgent
+                    .Where(aa => aa.AgencyId == agencyAgent.AgencyId && aa.AgencyId == agencyAgent.AgentId)
+                    .SingleOrDefault();
+                if (updating == null)
+                {
+                    response.Message = "Failed to find AgencyAgent with given Id.";
+                    return response;
+                }
+                updating.SecurityClearenceId = agencyAgent.SecurityClearenceId;
+                updating.BadgeId = agencyAgent.BadgeId;
+                updating.ActivationDate = agencyAgent.ActivationDate;
+                updating.DeactivationDate = agencyAgent.DeactivationDate;
+                updating.IsActive = agencyAgent.IsActive;
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
                 return response;
             }
-            updating.SecurityClearenceId = agencyAgent.SecurityClearenceId;
-            updating.BadgeId = agencyAgent.BadgeId;
-            updating.ActivationDate = agencyAgent.ActivationDate;
-            updating.DeactivationDate = agencyAgent.DeactivationDate;
-            updating.IsActive = agencyAgent.IsActive;
-            context.SaveChanges();
             response.Success = true;
             return response;
         }

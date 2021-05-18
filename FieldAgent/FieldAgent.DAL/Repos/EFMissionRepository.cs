@@ -21,23 +21,41 @@ namespace FieldAgent.DAL.Repos
 
         public Response Delete(int missionId)
         {
-            var toRemove = context.Mission.Find(missionId);
+            Mission toRemove;
             var response = new Response();
-            if (toRemove == null)
+            try
             {
-                response.Message = "Failed to find mission with given Id.";
+                toRemove = context.Mission.Find(missionId);
+                if (toRemove == null)
+                {
+                    response.Message = "Failed to find mission with given Id.";
+                    return response;
+                }
+                context.Mission.Remove(toRemove);
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
                 return response;
             }
-            context.Mission.Remove(toRemove);
-            context.SaveChanges();
             response.Success = true;
             return response;
         }
 
         public Response<Mission> Get(int missionId)
         {
-            Mission found = context.Mission.Find(missionId);
             var response = new Response<Mission>();
+            Mission found;
+            try
+            {
+                found = context.Mission.Find(missionId);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             if (found == null)
             {
                 response.Message = "Failed to find mission with given Id.";
@@ -50,8 +68,17 @@ namespace FieldAgent.DAL.Repos
 
         public Response<List<Mission>> GetByAgency(int agencyId)
         {
-            List<Mission> missions = context.Mission.Where(a => a.AgencyId == agencyId).ToList();
+            List<Mission> missions;
             var response = new Response<List<Mission>>();
+            try
+            {
+                missions = context.Mission.Where(a => a.AgencyId == agencyId).ToList();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             response.Success = true;
             response.Data = missions;
             return response;
@@ -59,11 +86,20 @@ namespace FieldAgent.DAL.Repos
 
         public Response<List<Mission>> GetByAgent(int agentId)
         {
-            List<Mission> missions = context.Mission
-                .Include(m => m.Agents)
-                .Where(m => m.Agents.Any(a => a.AgentId == agentId))
-                .ToList();
+            List<Mission> missions;
             var response = new Response<List<Mission>>();
+            try
+            {
+                missions = context.Mission
+                    .Include(m => m.Agents)
+                    .Where(m => m.Agents.Any(a => a.AgentId == agentId))
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             response.Success = true;
             response.Data = missions;
             return response;
@@ -73,28 +109,45 @@ namespace FieldAgent.DAL.Repos
         {
             Mission inserted = context.Mission.Add(mission).Entity;
             var response = new Response<Mission>();
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             response.Data = inserted;
             response.Success = true;
-            context.SaveChanges();
             return response;
         }
 
         public Response Update(Mission mission)
         {
-            Mission updating = context.Mission.Find(mission.MissionId);
+            Mission updating;
             var response = new Response();
-            if (updating == null)
+            try
             {
-                response.Message = "Failed to find mission with given Id.";
+                updating = context.Mission.Find(mission.MissionId);
+                if (updating == null)
+                {
+                    response.Message = "Failed to find mission with given Id.";
+                    return response;
+                }
+                updating.CodeName = mission.CodeName;
+                updating.StartDate = mission.StartDate;
+                updating.ProjectedEndDate = mission.ProjectedEndDate;
+                updating.ActualEndDate = mission.ActualEndDate;
+                updating.OperationalCost = mission.OperationalCost;
+                updating.Notes = mission.Notes;
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
                 return response;
             }
-            updating.CodeName = mission.CodeName;
-            updating.StartDate = mission.StartDate;
-            updating.ProjectedEndDate = mission.ProjectedEndDate;
-            updating.ActualEndDate = mission.ActualEndDate;
-            updating.OperationalCost = mission.OperationalCost;
-            updating.Notes = mission.Notes;
-            context.SaveChanges();
             response.Success = true;
             return response;
         }

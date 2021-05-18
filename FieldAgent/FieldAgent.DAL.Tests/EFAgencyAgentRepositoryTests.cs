@@ -134,27 +134,7 @@ namespace FieldAgent.DAL.Tests
         }
 
         // Helper Functions
-        private Agent MakeAgent()
-        {
-            return new Agent
-            {
-                FirstName = "Alex",
-                LastName = "Carney",
-                DateOfBirth = new DateTime(1997, 12, 16),
-                Height = 6.5M
-            };
-        }
-
-        private Agency MakeAgency()
-        {
-            return new Agency
-            {
-                ShortName = "FBI",
-                LongName = "Federal Bureau of Investigation"
-            };
-        }
-
-        private AgencyAgent MakeAgencyAgent() 
+        private static AgencyAgent MakeAgencyAgent() 
         {
             return new AgencyAgent
             {

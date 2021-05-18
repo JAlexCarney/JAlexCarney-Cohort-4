@@ -1,12 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FieldAgent.DAL.Repos;
 using FieldAgent.Core.Entities;
-using FieldAgent.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldAgent.DAL.Tests
@@ -160,7 +155,7 @@ namespace FieldAgent.DAL.Tests
         }
 
         // Helper Functions
-        private Agent MakeAgent() 
+        private static Agent MakeAgent() 
         {
             return new Agent
             {
@@ -171,7 +166,7 @@ namespace FieldAgent.DAL.Tests
             };
         }
 
-        private Alias MakeAlias()
+        private static Alias MakeAlias()
         {
             return new Alias
             {

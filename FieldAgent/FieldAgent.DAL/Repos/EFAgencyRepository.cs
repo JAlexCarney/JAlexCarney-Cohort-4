@@ -21,59 +21,77 @@ namespace FieldAgent.DAL.Repos
 
         public Response Delete(int agencyId)
         {
-            var toRemove = context.Agency.Find(agencyId);
             var response = new Response();
-            if (toRemove == null)
+            Agency toRemove;
+            try
             {
-                response.Message = "Failed to find Agency with given Id.";
+                toRemove = context.Agency.Find(agencyId);
+                if (toRemove == null)
+                {
+                    response.Message = "Failed to find Agency with given Id.";
+                    return response;
+                }
+                var locationsToRemove = context.Location.Where(a => a.AgencyId == agencyId);
+                if (locationsToRemove.Any())
+                {
+                    foreach (Location location in locationsToRemove)
+                    {
+                        context.Location.Remove(location);
+                        context.SaveChanges();
+                    }
+                }
+                var agencyAgentsToRemove = context.AgencyAgent.Where(a => a.AgencyId == agencyId);
+                if (agencyAgentsToRemove.Any())
+                {
+                    foreach (AgencyAgent agencyAgent in agencyAgentsToRemove)
+                    {
+                        context.AgencyAgent.Remove(agencyAgent);
+                        context.SaveChanges();
+                    }
+                }
+                var missionsToRemove = context.Mission.Where(m => m.AgencyId == agencyId);
+                if (missionsToRemove.Any())
+                {
+                    foreach (Mission mission in missionsToRemove)
+                    {
+                        var missionAgentsToRemove = context.MissionAgent.Where(ma => ma.MissionId == mission.MissionId);
+                        if (missionAgentsToRemove.Any())
+                        {
+                            foreach (MissionAgent missionAgent in missionAgentsToRemove)
+                            {
+                                context.MissionAgent.Remove(missionAgent);
+                                context.SaveChanges();
+                            }
+                        }
+                        context.Mission.Remove(mission);
+                        context.SaveChanges();
+                    }
+                }
+                context.Agency.Remove(toRemove);
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
                 return response;
             }
-            var locationsToRemove = context.Location.Where(a => a.AgencyId == agencyId);
-            if (locationsToRemove.Any())
-            {
-                foreach (Location location in locationsToRemove)
-                {
-                    context.Location.Remove(location);
-                    context.SaveChanges();
-                }
-            }
-            var agencyAgentsToRemove = context.AgencyAgent.Where(a => a.AgencyId == agencyId);
-            if (agencyAgentsToRemove.Any())
-            {
-                foreach (AgencyAgent agencyAgent in agencyAgentsToRemove)
-                {
-                    context.AgencyAgent.Remove(agencyAgent);
-                    context.SaveChanges();
-                }
-            }
-            var missionsToRemove = context.Mission.Where(m => m.AgencyId == agencyId);
-            if (missionsToRemove.Any())
-            {
-                foreach (Mission mission in missionsToRemove)
-                {
-                    var missionAgentsToRemove = context.MissionAgent.Where(ma => ma.MissionId == mission.MissionId);
-                    if (missionAgentsToRemove.Any())
-                    {
-                        foreach (MissionAgent missionAgent in missionAgentsToRemove)
-                        {
-                            context.MissionAgent.Remove(missionAgent);
-                            context.SaveChanges();
-                        }
-                    }
-                    context.Mission.Remove(mission);
-                    context.SaveChanges();
-                }
-            }
-            context.Agency.Remove(toRemove);
-            context.SaveChanges();
             response.Success = true;
             return response;
         }
 
         public Response<Agency> Get(int agencyId)
         {
-            Agency found = context.Agency.Find(agencyId);
             var response = new Response<Agency>();
+            Agency found;
+            try 
+            {
+                found = context.Agency.Find(agencyId);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             if (found == null)
             {
                 response.Message = "Failed to find Agency with given Id.";
@@ -86,8 +104,17 @@ namespace FieldAgent.DAL.Repos
 
         public Response<List<Agency>> GetAll()
         {
-            List<Agency> found = context.Agency.ToList();
             var response = new Response<List<Agency>>();
+            List<Agency> found;
+            try 
+            { 
+                found = context.Agency.ToList(); 
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             response.Success = true;
             response.Data = found;
             return response;
@@ -95,8 +122,17 @@ namespace FieldAgent.DAL.Repos
 
         public Response<Agency> Insert(Agency agency)
         {
-            Agency inserted = context.Agency.Add(agency).Entity;
             var response = new Response<Agency>();
+            Agency inserted;
+            try
+            {
+                inserted = context.Agency.Add(agency).Entity;
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
             response.Data = inserted;
             response.Success = true;
             context.SaveChanges();
@@ -105,16 +141,25 @@ namespace FieldAgent.DAL.Repos
 
         public Response Update(Agency agency)
         {
-            Agency updating = context.Agency.Find(agency.AgencyId);
+            Agency updating;
             var response = new Response();
-            if (updating == null)
+            try
             {
-                response.Message = "Failed to find Agency with given Id.";
+                updating = context.Agency.Find(agency.AgencyId);
+                if (updating == null)
+                {
+                    response.Message = "Failed to find Agency with given Id.";
+                    return response;
+                }
+                updating.ShortName = agency.ShortName;
+                updating.LongName = agency.LongName;
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
                 return response;
             }
-            updating.ShortName = agency.ShortName;
-            updating.LongName = agency.LongName;
-            context.SaveChanges();
             response.Success = true;
             return response;
         }

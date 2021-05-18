@@ -146,7 +146,7 @@ namespace FieldAgent.DAL.Tests
         }
 
         // Helper Functions
-        private Agency MakeAgency()
+        private static Agency MakeAgency()
         {
             return new Agency
             {
@@ -155,7 +155,7 @@ namespace FieldAgent.DAL.Tests
             };
         }
 
-        private Location MakeLocation()
+        private static Location MakeLocation()
         {
             return new Location
             {
