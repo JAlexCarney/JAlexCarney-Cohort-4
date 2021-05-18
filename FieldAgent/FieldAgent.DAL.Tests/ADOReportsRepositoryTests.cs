@@ -8,7 +8,12 @@ using FieldAgent.DAL.Repos;
 using FieldAgent.Core.Entities;
 using FieldAgent.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
+using Microsoft.Extensions.Configuration.UserSecrets;
+using System.Reflection;
 
+[assembly: UserSecretsId("29e65d1a-e03e-441b-a297-7a3afe173669")]
 namespace FieldAgent.DAL.Tests
 {
     class ADOReportsRepositoryTests
@@ -18,7 +23,15 @@ namespace FieldAgent.DAL.Tests
         [OneTimeSetUp]
         public void Setup()
         {
-            repo = new ADOReportsRepository(@"Server=localhost;Database=FieldAgent;User Id=sa;Password=YOUR_strong_*pass4w0rd*");
+            var builder = new ConfigurationBuilder();
+
+            builder.AddUserSecrets(typeof(ADOReportsRepositoryTests).GetTypeInfo().Assembly);
+
+            var config = builder.Build();
+
+            var connectionString = config["ConnectionStrings:FieldAgent"];
+            //string connectionString = @"Server=localhost;Database=FieldAgent;User Id=sa;Password=YOUR_strong_*pass4w0rd*";
+            repo = new ADOReportsRepository(connectionString);
         }
 
         [Test]

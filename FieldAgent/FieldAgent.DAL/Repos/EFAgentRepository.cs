@@ -28,6 +28,33 @@ namespace FieldAgent.DAL.Repos
                 response.Message = "Failed to find Agent with given Id.";
                 return response;
             }
+            var aliasesToRemove = context.Alias.Where(a => a.AgentId == agentId);
+            if (aliasesToRemove.Any()) 
+            {
+                foreach (Alias alias in aliasesToRemove) 
+                {
+                    context.Alias.Remove(alias);
+                    context.SaveChanges();
+                }
+            }
+            var agencyAgentsToRemobe = context.AgencyAgent.Where(a => a.AgentId == agentId);
+            if (agencyAgentsToRemobe.Any())
+            {
+                foreach (AgencyAgent agencyAgent in agencyAgentsToRemobe)
+                {
+                    context.AgencyAgent.Remove(agencyAgent);
+                    context.SaveChanges();
+                }
+            }
+            var missionAgentsToRemove = context.MissionAgent.Where(a => a.AgentId == agentId);
+            if (missionAgentsToRemove.Any())
+            {
+                foreach (MissionAgent missionAgent in missionAgentsToRemove)
+                {
+                    context.MissionAgent.Remove(missionAgent);
+                    context.SaveChanges();
+                }
+            }
             context.Agent.Remove(toRemove);
             context.SaveChanges();
             response.Success = true;

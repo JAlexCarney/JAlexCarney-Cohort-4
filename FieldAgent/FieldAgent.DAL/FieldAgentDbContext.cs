@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FieldAgent.Core;
 using FieldAgent.Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace FieldAgent.DAL
 {
@@ -27,22 +28,41 @@ namespace FieldAgent.DAL
         {
         }
 
+        public FieldAgentDbContext GetDbContext(string ConnectionString) 
+        {
+            var options = new DbContextOptionsBuilder<FieldAgentDbContext>()
+                .UseSqlServer(ConnectionString)
+                .Options;
+            return new FieldAgentDbContext(options);
+        }
+
         // insert test data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Create Keys For Bridge Tables
             modelBuilder.Entity<AgencyAgent>()
                 .HasKey(k => new { k.AgencyId, k.AgentId});
             modelBuilder.Entity<MissionAgent>()
                 .HasKey(k => new { k.MissionId, k.AgentId });
+
+            // Set Delete Mode and key constraintes
             modelBuilder.Entity<Alias>()
                 .HasOne(a => a.Agent)
-                .WithMany(a => a.Aliases);
+                .WithMany(a => a.Aliases)
+                .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<AgencyAgent>()
                 .HasOne(aa => aa.Agent)
-                .WithMany(a => a.AgencyAgents);
-            modelBuilder.Entity<AgencyAgent>()
-                .HasOne(aa => aa.Agency)
-                .WithMany(a => a.AgencyAgents);
+                .WithMany(a => a.AgencyAgents)
+                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Agent>()
+                .HasMany(a => a.Missions)
+                .WithMany(m => m.Agents);
+            modelBuilder.Entity<Location>()
+                .HasOne(l => l.Agency)
+                .WithMany(a => a.Locations)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Populate Constant Security Clearance Table
             modelBuilder.Entity<SecurityClearance>()
                 .HasData(
                     new SecurityClearance
@@ -71,6 +91,8 @@ namespace FieldAgent.DAL
                         SecurityClearanceName = "Black Ops"
                     }
                 );
+
+            // Call Method on Base Class
             base.OnModelCreating(modelBuilder);
         }
     }

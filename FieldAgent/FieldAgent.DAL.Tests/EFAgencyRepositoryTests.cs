@@ -14,6 +14,7 @@ namespace FieldAgent.DAL.Tests
     class EFAgencyRepositoryTests
     {
         private EFAgencyRepository repo;
+        private EFLocationRepository locationRepo;
 
         [SetUp]
         public void Setup()
@@ -25,6 +26,7 @@ namespace FieldAgent.DAL.Tests
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
             repo = new EFAgencyRepository(context);
+            locationRepo = new EFLocationRepository(context);
         }
 
         [Test]
@@ -124,6 +126,25 @@ namespace FieldAgent.DAL.Tests
             Assert.AreEqual("Failed to find Agency with given Id.", response2.Message);
         }
 
+        [Test]
+        public void ShouldCascadeDelete()
+        {
+            var data = MakeAgency();
+            var data2 = MakeLocation();
+
+            var response1 = repo.Insert(data);
+            var response2 = locationRepo.Insert(data2);
+            var response3 = repo.Delete(response1.Data.AgencyId);
+            var response4 = repo.Get(response1.Data.AgencyId);
+            var response5 = locationRepo.Get(response2.Data.LocationId);
+
+            Assert.IsTrue(response1.Success);
+            Assert.IsTrue(response2.Success);
+            Assert.IsTrue(response3.Success);
+            Assert.IsFalse(response4.Success);
+            Assert.IsFalse(response5.Success);
+        }
+
         // Helper Functions
         private Agency MakeAgency()
         {
@@ -131,6 +152,20 @@ namespace FieldAgent.DAL.Tests
             {
                ShortName = "FBI",
                LongName = "Federal Bureau of Investigation"
+            };
+        }
+
+        private Location MakeLocation()
+        {
+            return new Location
+            {
+                AgencyId = 1,
+                LocationName = "HeadQuaters",
+                Street1 = "1800 Cool Street",
+                Street2 = "",
+                City = "Indio",
+                PostalCode = "92203",
+                CountryCode = "US"
             };
         }
     }
