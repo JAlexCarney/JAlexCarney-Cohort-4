@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FieldAgent.Core", "FieldAgent.Core\FieldAgent.Core.csproj", "{EDAF7FEE-5C6D-4F63-9D3B-2D2063C4695D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLScripts", "SQLScripts", "{10E81E46-AF76-4811-833E-3A1580CFAB18}"
+	ProjectSection(SolutionItems) = preProject
+		ClearanceAudit.sql = ClearanceAudit.sql
+		FieldAgentSchema.sql = FieldAgentSchema.sql
+		Pension.sql = Pension.sql
+		SeedData.sql = SeedData.sql
+		TopAgent.sql = TopAgent.sql
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FieldAgent.DAL", "FieldAgent.DAL\FieldAgent.DAL.csproj", "{7A992279-94AE-44D0-B494-45EAE79FB08C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FieldAgent.DAL.Tests", "FieldAgent.DAL.Tests\FieldAgent.DAL.Tests.csproj", "{0525C335-8E4E-4A60-BB9C-3DAC27137418}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FieldAgent.Web", "FieldAgent.Web\FieldAgent.Web.csproj", "{A29EA133-D27E-450E-B605-2F3A80CA7ED1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EDAF7FEE-5C6D-4F63-9D3B-2D2063C4695D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDAF7FEE-5C6D-4F63-9D3B-2D2063C4695D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDAF7FEE-5C6D-4F63-9D3B-2D2063C4695D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDAF7FEE-5C6D-4F63-9D3B-2D2063C4695D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A992279-94AE-44D0-B494-45EAE79FB08C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A992279-94AE-44D0-B494-45EAE79FB08C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A992279-94AE-44D0-B494-45EAE79FB08C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A992279-94AE-44D0-B494-45EAE79FB08C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0525C335-8E4E-4A60-BB9C-3DAC27137418}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0525C335-8E4E-4A60-BB9C-3DAC27137418}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0525C335-8E4E-4A60-BB9C-3DAC27137418}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0525C335-8E4E-4A60-BB9C-3DAC27137418}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A29EA133-D27E-450E-B605-2F3A80CA7ED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A29EA133-D27E-450E-B605-2F3A80CA7ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A29EA133-D27E-450E-B605-2F3A80CA7ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A29EA133-D27E-450E-B605-2F3A80CA7ED1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F5863B59-3380-4218-B1D4-B783F202EE68}
+	EndGlobalSection
+EndGlobal
