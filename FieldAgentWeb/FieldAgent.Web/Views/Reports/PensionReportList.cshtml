@@ -1,0 +1,35 @@
+﻿@model List<FieldAgent.Core.DTOs.PensionListItem>
+
+@{
+    ViewBag.Title = "Pension List";
+}
+
+<h1>Pension Report</h1>
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Agency Name</th>
+                <th>Badge ID</th>
+                <th>Agent Name</th>
+                <th>Date Of Birth</th>
+                <th>Deactivation Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 1; i <= Model.Count; i++)
+            {
+                var pension = Model[i - 1];
+                string dob = $"{pension.DateOfBirth:d}";
+                string dd = $"{pension.DeactivationDate:d}";
+                <tr>
+                    <td>@pension.AgencyName</td>
+                    <td>@pension.BadgeId</td>
+                    <td>@pension.NameLastFirst</td>
+                    <td>@dob</td>
+                    <td>@dd</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

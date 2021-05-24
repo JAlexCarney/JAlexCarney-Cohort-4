@@ -1,0 +1,13 @@
+﻿@model FieldAgent.Core.Entities.Agency
+
+<h1>Remove Agency</h1>
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-4">
+        <form asp-controller="Agencies" asp-action="Remove" asp-route-id="@Model.AgencyId" method="post">
+            <p>Would you like to delete agent @Model.ShortName: @Model.LongName?</p>
+            <input type="hidden" asp-for="AgencyId" />
+            <button class="btn btn-danger">Delete</button>
+            <a asp-action="List" asp-controller="Building">Go Back</a>
+        </form>
+    </div>
+</div>

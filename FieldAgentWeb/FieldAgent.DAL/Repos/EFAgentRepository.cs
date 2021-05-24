@@ -54,15 +54,6 @@ namespace FieldAgent.DAL.Repos
                         context.SaveChanges();
                     }
                 }
-                var missionAgentsToRemove = context.MissionAgent.Where(a => a.AgentId == agentId);
-                if (missionAgentsToRemove.Any())
-                {
-                    foreach (MissionAgent missionAgent in missionAgentsToRemove)
-                    {
-                        context.MissionAgent.Remove(missionAgent);
-                        context.SaveChanges();
-                    }
-                }
                 context.Agent.Remove(toRemove);
                 context.SaveChanges();
             }
@@ -72,6 +63,29 @@ namespace FieldAgent.DAL.Repos
                 return response;
             }
             response.Success = true;
+            return response;
+        }
+
+        public Response<List<Agent>> GetAll()
+        {
+            var response = new Response<List<Agent>>();
+            List<Agent> found;
+            try
+            {
+                found = context.Agent.ToList();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                return response;
+            }
+            if (found == null)
+            {
+                response.Message = "Failed to find any Agents.";
+                return response;
+            }
+            response.Success = true;
+            response.Data = found;
             return response;
         }
 

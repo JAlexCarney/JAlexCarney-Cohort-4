@@ -21,7 +21,7 @@ namespace FieldAgent.DAL
         public DbSet<SecurityClearance> SecurityClearance { get; set; }
         
         // Bridge Tables
-        public DbSet<MissionAgent> MissionAgent { get; set; }
+        public DbSet<MissionAgent> AgentMission { get; set; }
         public DbSet<AgencyAgent> AgencyAgent { get; set; }
 
         public FieldAgentDbContext(DbContextOptions options) : base(options)
@@ -44,6 +44,21 @@ namespace FieldAgent.DAL
                 .HasKey(k => new { k.AgencyId, k.AgentId});
             modelBuilder.Entity<MissionAgent>()
                 .HasKey(k => new { k.MissionId, k.AgentId });
+            modelBuilder.Entity<Agent>()
+                        .HasMany(x => x.Missions)
+                        .WithMany(x => x.Agents)
+                         .UsingEntity<Dictionary<string, object>>(
+                                "MissionAgent", // <-- Name of the table
+                                j => j
+                                    .HasOne<Mission>() // <-- from the bridget table, it has one project
+                                    .WithMany() // <-- that can have many entries in the bridge table
+                                    .HasForeignKey("MissionId") // <-- it's column name is ProjectId
+                                ,
+                                j => j
+                                    .HasOne<Agent>()
+                                    .WithMany()
+                                    .HasForeignKey("AgentId")
+                            );
 
             // Set Delete Mode and key constraintes
             modelBuilder.Entity<Alias>()

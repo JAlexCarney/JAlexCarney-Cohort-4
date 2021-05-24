@@ -1,0 +1,32 @@
+﻿@model List<FieldAgent.Core.DTOs.TopAgentListItem>
+
+@{
+    ViewBag.Title = "Top Agents List";
+}
+
+<h1>Top Agents Report</h1>
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Date Of Birth</th>
+                <th>Completed Missions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 1; i <= Model.Count; i++)
+            {
+                var topAgent = Model[i-1];
+                string dob = $"{topAgent.DateOfBirth:d}";
+            <tr>
+                <td>@i</td>
+                <td>@topAgent.NameLastFirst</td>
+                <td>@dob</td>
+                <td>@topAgent.CompletedMissionCount</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

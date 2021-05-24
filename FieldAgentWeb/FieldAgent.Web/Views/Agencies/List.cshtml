@@ -1,0 +1,34 @@
+﻿@model List<FieldAgent.Core.Entities.Agency>
+
+@{
+    ViewBag.Title = "Agencies List";
+}
+
+<h1>Agencies List</h1>
+<div class="row">
+    <a asp-controller="Agencies" asp-action="Add">Add New Agency</a>
+</div>
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Short Name</th>
+                <th>Long Name</th>
+                <th>Date Of Birth</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var agency in Model)
+            {
+                <tr>
+                    <td><a asp-controller="Agencies" asp-action="Get" asp-route-id="@agency.AgencyId">@agency.AgencyId</a></td>
+                    <td>@agency.ShortName</td>
+                    <td>@agency.LongName</td>
+                    <td><a asp-action="Edit" asp-controller="Agencies" asp-route-id="@agency.AgencyId">Edit</a></td>
+                    <td><a asp-action="Remove" asp-controller="Agencies" asp-route-id="@agency.AgencyId">Delete</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

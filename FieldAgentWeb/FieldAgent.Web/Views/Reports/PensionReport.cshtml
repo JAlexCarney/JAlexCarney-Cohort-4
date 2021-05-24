@@ -1,0 +1,15 @@
+﻿@model FieldAgent.Web.Controllers.Model.IdModel
+
+<h1>Enter Report Information</h1>
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-4">
+        <form asp-controller="Reports" asp-action="PensionReportList" method="get">
+            <div class="mb-3">
+                <label asp-for="Id" class="form-label">Agency Id</label>
+                <input type="number" class="form-control" id="Id" asp-for="Id">
+                <input type="hidden" asp-for="Id2">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>

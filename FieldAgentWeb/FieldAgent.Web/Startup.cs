@@ -10,6 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FieldAgent.Web
 {
@@ -25,6 +29,23 @@ namespace FieldAgent.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer(options =>
+               {
+                   options.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       ValidateIssuer = true,
+                       ValidateAudience = true,
+                       ValidateLifetime = true,
+                       ValidateIssuerSigningKey = true,
+
+                       ValidIssuer = "http://localhost:2000",
+                       ValidAudience = "http://localhost:2000",
+                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("KeyForSignInSecret@1234"))
+                   };
+                   services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+               });
+
             services.AddRazorPages();
 
             services.AddControllersWithViews();

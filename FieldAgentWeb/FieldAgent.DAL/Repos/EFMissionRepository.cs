@@ -95,10 +95,10 @@ namespace FieldAgent.DAL.Repos
             var response = new Response<List<Mission>>();
             try
             {
-                missions = context.Mission
+                var missions2 = context.Mission
                     .Include(m => m.Agents)
-                    .Where(m => m.Agents.Any(a => a.AgentId == agentId))
-                    .ToList();
+                    .Where(m => m.Agents.Any(a => a.AgentId == agentId));
+                missions = missions2.ToList();
             }
             catch (Exception ex)
             {

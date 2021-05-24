@@ -59,12 +59,12 @@ namespace FieldAgent.DAL.Repos
                 {
                     foreach (Mission mission in missionsToRemove)
                     {
-                        var missionAgentsToRemove = context.MissionAgent.Where(ma => ma.MissionId == mission.MissionId);
+                        var missionAgentsToRemove = context.AgentMission.Where(ma => ma.MissionId == mission.MissionId);
                         if (missionAgentsToRemove.Any())
                         {
                             foreach (MissionAgent missionAgent in missionAgentsToRemove)
                             {
-                                context.MissionAgent.Remove(missionAgent);
+                                context.AgentMission.Remove(missionAgent);
                                 context.SaveChanges();
                             }
                         }
