@@ -5,9 +5,14 @@ a.navbar-brand {
   white-space: normal;
   text-align: center;
   word-break: break-all;
+  color: darkorange !important;
 }
 
-/* Provide sufficient contrast against white background */
+a.nav-link {
+    color: white !important;
+    font-weight: bolder !important;
+}
+/*
 a {
   color: #0366d6;
 }
@@ -23,11 +28,11 @@ a {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
-
+*/
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 @media (min-width: 768px) {
   html {

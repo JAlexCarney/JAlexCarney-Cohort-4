@@ -49,6 +49,16 @@ namespace FieldAgent.Web.Controllers
         [HttpGet]
         public IActionResult PensionReportList(IdModel model)
         {
+            if (model.Id == 0) 
+            {
+                ModelState.AddModelError("Id", "Agency Id is required");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = _reportsRepository.GetPensionList(model.Id);
             if (!response.Success)
             {
@@ -68,7 +78,22 @@ namespace FieldAgent.Web.Controllers
         [HttpGet]
         public IActionResult ClearanceAuditReportList(IdModel model)
         {
-            var response = _reportsRepository.AuditClearance(model.Id, model.Id2);
+            if (model.Id == 0)
+            {
+                ModelState.AddModelError("Id", "Security Clearance Id is required");
+            }
+            
+            if (!model.Id2.HasValue)
+            {
+                ModelState.AddModelError("Id", "Agency Id is required");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = _reportsRepository.AuditClearance(model.Id, model.Id2.Value);
             if (!response.Success)
             {
                 throw new Exception(response.Message);
