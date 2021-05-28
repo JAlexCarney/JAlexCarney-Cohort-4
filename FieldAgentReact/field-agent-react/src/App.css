@@ -1,0 +1,41 @@
+.navbar-brand {
+  color: #FDFD96 !important;
+}
+
+.btn-round {
+  border-radius: 50%;
+}
+
+.table-data {
+  margin: auto;
+  text-align: left;
+  vertical-align: middle;
+  font-size: larger;
+}
+
+.form-header {
+  text-align: center;
+  padding-top: 10px;
+  color: #FDFD96;
+}
+
+.btn-submit {
+  margin-top: 20px;
+}
+
+form {
+  text-align: center;
+}
+
+label {
+  font-size: larger;
+  padding-top: 10px;
+}
+
+input {
+  border-radius: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border: none;
+  width: 75%;
+}

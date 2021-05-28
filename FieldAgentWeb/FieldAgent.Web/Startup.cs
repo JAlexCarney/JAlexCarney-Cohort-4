@@ -46,6 +46,11 @@ namespace FieldAgent.Web
                    services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
                });
 
+            services.AddCors(options => options.AddPolicy("corspolicy", (builder) =>
+            {
+                builder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+            }));
+
             services.AddRazorPages();
 
             services.AddControllersWithViews();
@@ -80,6 +85,8 @@ namespace FieldAgent.Web
             app.UseRouting();
 
             app.UseAuthentication();
+
+            app.UseCors("corspolicy");
 
             app.UseAuthorization();
 
