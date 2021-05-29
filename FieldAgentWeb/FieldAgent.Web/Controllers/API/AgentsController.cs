@@ -131,7 +131,7 @@ namespace FieldAgent.Web.Controllers
 
             if (result.Success)
             {
-                return Ok();
+                return NoContent();
             }
             else
             {

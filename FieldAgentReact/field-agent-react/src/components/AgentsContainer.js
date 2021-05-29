@@ -7,7 +7,7 @@ let Component = (props) =>
     const [state, setState] = useState({
         list:[],
         currentForm:"",
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjIyMzUyMjgsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6MjAwMCIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MjAwMCJ9.KravefU1H6I3QzdJCOCH-wkr1VT2rc_zR8wCKJJ65pQ",
+        token: props.token,
         currentAgent:{}
     });
 
@@ -28,9 +28,21 @@ let Component = (props) =>
                 }
                 return response.json();
             })
-            .then(json => {console.log(json); setState({list:json, currentForm:"", currentAgent:{}, token:state.token});})
+            .then(json => {setState({list:json, currentForm:"", currentAgent:{}, token:state.token})})
             .catch(console.log);
-    }, []);
+    }, [state.token]);
+
+    let exitView = () => 
+    {
+        setState(
+            {
+                token:state.token,
+                currentAgent:{},
+                currentForm:"",
+                list:state.list
+            }
+        );
+    }
 
     let viewAddForm = () => 
     {
@@ -44,6 +56,34 @@ let Component = (props) =>
         );
     }
 
+    let handleAdd = (agent) => 
+    {
+        const init = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer " + state.token
+            },
+            body: JSON.stringify(agent)
+          };
+      
+          fetch("https://localhost:44355/api/agents", init)
+            .then(response => {
+                if (response.status !== 201) {
+                    return Promise.reject("response is not 200 OK");
+                }
+                return response.json();
+            })
+            .then(json => setState({
+                list:[...state.list, json],
+                currentForm:"",
+                currentAgent:{},
+                token:state.token
+            }))
+            .catch(console.log);
+    }
+
     let viewUpdateForm = (agent) => 
     {
         setState(
@@ -54,6 +94,38 @@ let Component = (props) =>
                 list:state.list
             }
         );
+    }
+
+    let handleUpdate = (agent) => 
+    {
+        const init = {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer " + state.token
+            },
+            body: JSON.stringify(agent)
+        };
+
+        fetch("https://localhost:44355/api/agents", init)
+            .then(response => {
+                if (response.status !== 200) {
+                    return Promise.reject("response is not 200 OK");
+                }
+            })
+            .then((json) => {
+            let uneditedAgent = state.list.find(a => a.agentId === agent.agentId);
+            let index = state.list.indexOf(uneditedAgent);
+            let newList = [...state.list]
+            newList[index] = agent;
+            setState({
+                list:newList,
+                currentForm:"",
+                currentAgent:{},
+                token:state.token
+            });})
+            .catch(console.log);
     }
 
     let viewViewForm = (agent) => 
@@ -80,16 +152,34 @@ let Component = (props) =>
         );
     }
 
-    let exitView = () => 
+    let handleDelete = (agent) =>
     {
-        setState(
-            {
-                token:state.token,
-                currentAgent:{},
-                currentForm:"",
-                list:state.list
+        let id = agent.agentId;
+
+        const init = {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + state.token
             }
-        );
+        };
+
+        fetch(`https://localhost:44355/api/agents/${id}`, init)
+            .then(response => {
+                if (response.status === 204) {
+                    // `filter` new state
+                    setState({
+                        list:state.list.filter(agent => agent.agentId !== id),
+                        currentForm:"",
+                        currentAgent:{},
+                        token:state.token
+                    });
+                } else if (response.status === 404) {
+                    return Promise.reject("agent not found");
+                } else {
+                    return Promise.reject(`Delete failed with status: ${response.status}`);
+                }
+            })
+            .catch(console.log);
     }
 
     let tableSize="col col-8";
@@ -102,13 +192,13 @@ let Component = (props) =>
     switch(state.currentForm)
     {
         case "Add":
+            selectedAction = handleAdd;
             break;
         case "Edit":
-            break;
-        case "View":
-            selectedAction = exitView;
+            selectedAction = handleUpdate;
             break;
         case "Delete":
+            selectedAction = handleDelete;
             break;
         default:
             break;
@@ -125,7 +215,7 @@ let Component = (props) =>
                     handleView={viewViewForm}/>
                 </div>
                 <div className="col col-4">
-                    <AgentFormSelector form={state.currentForm} agent={state.currentAgent} action={selectedAction}/>
+                    <AgentFormSelector form={state.currentForm} agent={state.currentAgent} action={selectedAction} exitAction={exitView}/>
                 </div>
             </div>
         </div>

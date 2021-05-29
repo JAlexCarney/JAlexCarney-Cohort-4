@@ -9,13 +9,13 @@ let Component = (props) =>
     switch(props.form)
     {
         case "Add":
-            return (<AgentAddForm handleAdd={props.action}/>);
+            return (<AgentAddForm handleAdd={props.action} exitView={props.exitAction}/>);
         case "Edit":
-            return (<AgentEditForm agent={props.agent} handleEdit={props.action}/>);
+            return (<AgentEditForm agent={props.agent} handleEdit={props.action} exitView={props.exitAction}/>);
         case "View":
-            return (<AgentViewForm agent={props.agent} exitView={props.action}/>);
+            return (<AgentViewForm agent={props.agent} exitView={props.exitAction}/>);
         case "Delete":
-            return (<AgentDeleteForm agent={props.agent} handleDelete={props.action}/>);
+            return (<AgentDeleteForm agent={props.agent} handleDelete={props.action} exitView={props.exitAction}/>);
         default:
             return (<div></div>);
     }

@@ -30,6 +30,7 @@ form {
 label {
   font-size: larger;
   padding-top: 10px;
+  width: 100%;
 }
 
 input {
@@ -38,4 +39,8 @@ input {
   padding-right: 15px;
   border: none;
   width: 75%;
+}
+
+.login-form {
+  width: 10% !important;
 }

@@ -9,14 +9,13 @@ let Component = (props) =>
                 <tr key={i}>
                     <td><button className="btn btn-secondary btn-round table-data" onClick={() => props.handleView(agent)}>{agent.agentId}</button></td>
                     <td className="table-data">{agent.lastName + ", " + agent.firstName}</td>
-                    <td className="table-data">{agent.dateOfBirth}</td>
+                    <td className="table-data">{agent.dateOfBirth.slice(0, 10)}</td>
                     <td><button className="btn btn-primary table-data" onClick={() => props.handleUpdate(agent)}>Edit</button>
                     <button className="btn btn-danger table-data" onClick={() => props.handleDelete(agent)}>Delete</button></td>
                 </tr>
             );
         });
     }
-
     return (
         <table className="table table-striped">
             <thead className="thead">
@@ -32,9 +31,9 @@ let Component = (props) =>
                     <td className="table-data">-</td>
                     <td className="table-data">-</td>
                     <td className="table-data">-</td>
-                    <td><button className="btn btn-primary table-data" onClick={() => props.handleAdd()}>Add</button></td>
+                    <td><button className="btn btn-primary table-data" onClick={() => props.handleAdd()}>Add Agent</button></td>
                 </tr>
-                {mapToTr([props.list])}
+                {mapToTr(props.list)}
             </tbody>
         </table>
     );

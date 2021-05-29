@@ -17,7 +17,11 @@ let Component = (props) =>
                     </tr>
                     <tr>
                         <th>Date Of Birth</th>
-                        <td>{props.agent.dateOfBirth}</td>
+                        <td>{props.agent.dateOfBirth.slice(0, 10)}</td>
+                    </tr>
+                    <tr>
+                        <th>Height</th>
+                        <td>{props.agent.height}</td>
                     </tr>
                 </tbody>
             </table>
