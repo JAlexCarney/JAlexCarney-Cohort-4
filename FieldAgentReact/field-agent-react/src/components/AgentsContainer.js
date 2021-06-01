@@ -114,7 +114,7 @@ let Component = (props) =>
                     return Promise.reject("response is not 200 OK");
                 }
             })
-            .then((json) => {
+            .then(() => {
             let uneditedAgent = state.list.find(a => a.agentId === agent.agentId);
             let index = state.list.indexOf(uneditedAgent);
             let newList = [...state.list]
