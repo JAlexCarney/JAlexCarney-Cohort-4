@@ -4,6 +4,7 @@
 
 .btn-round {
   border-radius: 50%;
+  font-family: 'Comfortaa', cursive;
 }
 
 .table-data {
@@ -21,6 +22,30 @@
 
 .btn-submit {
   margin-top: 20px;
+  font-family: 'Comfortaa', cursive;
+  font-size: larger;
+  border-radius: 20px;
+}
+
+.btn-add {
+  border-radius: 20px;
+  padding-left: 22px;
+  padding-right: 22px;
+  font-family: 'Comfortaa', cursive;
+}
+
+.btn-edit {
+  border-radius: 20px 0% 0% 20px;
+  font-family: 'Comfortaa', cursive;
+}
+
+.btn-delete {
+  border-radius: 0% 20px 20px 0%;
+  font-family: 'Comfortaa', cursive;
+}
+
+.btn {
+  padding-bottom: 2px;
 }
 
 form {
@@ -43,4 +68,73 @@ input {
 
 .login-form {
   width: 10% !important;
+}
+
+.my-custom-scrollbar {
+  position: relative;
+  height: 500px;
+  overflow: auto;
+}
+
+.table-wrapper-scroll-y {
+display: block;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: gray; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: darkgray; 
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .agent-form-container {
+    animation: Expand normal 0.75s ease-out;
+  }
+}
+
+@keyframes Expand {
+  0% {
+    transform: scale(0, 1);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+.header-img {
+  width: 30px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .header-img {
+    animation: logo-spin infinite 5s linear;
+  }
+}
+
+@keyframes logo-spin {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50%{
+    transform: scale(1.2) rotate(180deg);
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+  }
 }

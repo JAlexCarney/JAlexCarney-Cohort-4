@@ -17,7 +17,7 @@ let Component = (props) =>
     };
 
     return (
-        <div>
+        <div className="agent-form-container">
             <h3 className="form-header">Editing Agent{" " + props.agent.agentId}</h3>
         <form key={props.agent.agentId} onSubmit={(event) => {event.preventDefault(); props.handleEdit(state);}}>
             <div className="form-field">

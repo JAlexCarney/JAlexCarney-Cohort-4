@@ -13,7 +13,7 @@ let Component = (props) =>
     };
 
     return (
-        <div>
+        <div className="agent-form-container">
             <h3 className="form-header">Adding Agent</h3>
         <form onSubmit={(event) => {event.preventDefault(); props.handleAdd(state);}}>
             <div className="form-field">

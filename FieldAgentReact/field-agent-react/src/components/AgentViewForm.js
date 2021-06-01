@@ -3,7 +3,7 @@ import React from 'react';
 let Component = (props) => 
 {
     return (
-        <div>
+        <div className="agent-form-container">
             <h3 className="form-header">Viewing Agent{" " + props.agent.agentId}</h3>
             <table className="table table-striped">
                 <tbody>
